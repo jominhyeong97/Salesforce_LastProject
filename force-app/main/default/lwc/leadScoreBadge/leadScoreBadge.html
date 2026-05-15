@@ -1,0 +1,30 @@
+<template>
+    <lightning-card icon-name="standard:lead_insights" title="리드 점수">
+        <div class="score-card">
+            <div class={stripClass}></div>
+            <div class="score-body">
+                <div class="score-head">
+                    <div class="score-main">
+                        <div class="score-number">{scoreText}</div>
+                        <div class="score-level">{levelLabel}</div>
+                    </div>
+                    <div class="score-meta">
+                        <div class="score-company">{companyLabel}</div>
+                        <div class="score-chips">
+                            <span class="chip">{channelLabel}</span>
+                            <span class="chip">{statusLabel}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <template lwc:if={hasScore}>
+                    <div class="score-bar-track">
+                        <div class={barClass} style={progressStyle}></div>
+                    </div>
+                </template>
+
+                <p class="score-hint">{scoreHint}</p>
+            </div>
+        </div>
+    </lightning-card>
+</template>

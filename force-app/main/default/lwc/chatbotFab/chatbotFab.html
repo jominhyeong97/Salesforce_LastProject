@@ -1,0 +1,21 @@
+<template>
+    <!-- Floating Action Button (둥둥 떠있는 동그라미) -->
+    <button class={fabClass} onclick={handleToggle} title="세일즈 도우미">
+        <span class="fab__icon">{fabIcon}</span>
+    </button>
+
+    <!-- 챗봇 패널 — chat-panel 자체 header(보라) + body 안에 inputBar 임베드 -->
+    <template lwc:if={isOpen}>
+        <div class="chat-panel">
+            <header class="chat-panel__header">
+                <span class="chat-panel__icon">🤖</span>
+                <span class="chat-panel__title">세일즈 도우미</span>
+                <span class="chat-panel__sub">한도정밀 영업 어시스턴트</span>
+                <button class="chat-panel__close" onclick={handleClose} title="닫기" aria-label="닫기">✕</button>
+            </header>
+            <div class="chat-panel__body">
+                <c-agentforce-input-bar hide-header="true"></c-agentforce-input-bar>
+            </div>
+        </div>
+    </template>
+</template>

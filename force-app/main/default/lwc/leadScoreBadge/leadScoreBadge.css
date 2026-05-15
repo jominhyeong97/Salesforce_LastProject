@@ -1,0 +1,104 @@
+:host {
+    --brand: #1B96FF;
+    --brand-dark: #0176D3;
+    --success: #2E844A;
+    --warning: #FE9339;
+    --error: #BA0517;
+    --gray-2: #F3F3F3;
+    --gray-3: #DDDBDA;
+    --gray-4: #706E6B;
+    --gray-5: #181818;
+    --r: 4px;
+}
+
+.score-card {
+    border: 1px solid var(--gray-3);
+    border-radius: var(--r);
+    background: white;
+    overflow: hidden;
+    margin: 0.4rem 0.8rem;
+}
+.score-strip {
+    height: 4px;
+    background: var(--gray-4);
+}
+.score-strip_hot      { background: var(--error); }
+.score-strip_warm     { background: var(--warning); }
+.score-strip_lukewarm { background: #B5762C; }
+.score-strip_cold     { background: var(--brand-dark); }
+
+.score-body {
+    padding: 0.9rem 1.1rem;
+}
+
+.score-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 0.6rem;
+    gap: 1rem;
+}
+.score-main {
+    flex: 0 0 auto;
+}
+.score-number {
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--gray-5);
+}
+.score-level {
+    font-size: 0.8rem;
+    color: var(--gray-4);
+    margin-top: 0.25rem;
+}
+.score-meta {
+    flex: 1 1 auto;
+    text-align: right;
+}
+.score-company {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--gray-5);
+}
+.score-chips {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.chip {
+    display: inline-block;
+    background: var(--gray-2);
+    color: var(--gray-5);
+    border: 1px solid var(--gray-3);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.score-bar-track {
+    height: 6px;
+    background: var(--gray-2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.score-bar {
+    height: 100%;
+    background: var(--brand);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+.score-bar_hot      { background: var(--error); }
+.score-bar_warm     { background: var(--warning); }
+.score-bar_lukewarm { background: #B5762C; }
+.score-bar_cold     { background: var(--brand-dark); }
+
+.score-hint {
+    font-size: 0.78rem;
+    margin: 0.6rem 0 0;
+    color: var(--gray-4);
+    font-style: normal;
+}

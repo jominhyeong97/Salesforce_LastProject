@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>font/ttf</contentType>
+    <description>한국어 PDF 렌더링용 Noto/Nanum Gothic 폰트 (Google Fonts, OFL).</description>
+</StaticResource>

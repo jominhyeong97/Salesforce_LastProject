@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>특정 Account 의 과거 발주 Product Family 분석 후 같은 Family 내 미구매 Product 인기순 추천. 자연어 "교차 판매", "추천 부품", "더 팔 수 있는".</description>
+    <invocationTarget>GetCrossSellCandidatesAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Get Cross Sell Candidates</masterLabel>
+</GenAiFunction>

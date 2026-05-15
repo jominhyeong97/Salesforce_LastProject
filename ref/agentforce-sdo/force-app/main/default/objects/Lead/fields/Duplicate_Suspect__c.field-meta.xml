@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duplicate_Suspect__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>AutoLeadByBC가 Lead INSERT 전 Database.findDuplicates 검사 결과 매칭이 있을 때 true. 사후 머지 결정용 깃발.</description>
+    <externalId>false</externalId>
+    <label>Duplicate Suspect</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

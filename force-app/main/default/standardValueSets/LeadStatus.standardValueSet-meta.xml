@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+
+    <!-- 한도정밀 4단계 (한국어 active) -->
+    <standardValue>
+        <fullName>신규</fullName>
+        <converted>false</converted>
+        <default>true</default>
+        <isActive>true</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>제안대기</fullName>
+        <converted>false</converted>
+        <default>false</default>
+        <isActive>true</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>전환완료</fullName>
+        <converted>true</converted>
+        <default>false</default>
+        <isActive>true</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>미전환</fullName>
+        <converted>false</converted>
+        <default>false</default>
+        <isActive>true</isActive>
+    </standardValue>
+
+    <!-- 표준 영문 (inactive) -->
+    <standardValue>
+        <fullName>Open - Not Contacted</fullName>
+        <converted>false</converted>
+        <default>false</default>
+        <isActive>false</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>Working - Contacted</fullName>
+        <converted>false</converted>
+        <default>false</default>
+        <isActive>false</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed - Converted</fullName>
+        <converted>true</converted>
+        <default>false</default>
+        <isActive>false</isActive>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed - Not Converted</fullName>
+        <converted>false</converted>
+        <default>false</default>
+        <isActive>false</isActive>
+    </standardValue>
+</StandardValueSet>

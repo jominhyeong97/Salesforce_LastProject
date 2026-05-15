@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lead_Source_Hint__c</fullName>
+    <description>명함 모서리에 인쇄된 전시회/이벤트 태그 등 (예: "Conference 2025"). Lead의 LeadSource 후보로 사용.</description>
+    <label>Lead Source Hint</label>
+    <length>80</length>
+    <required>false</required>
+    <type>Text</type>
+</CustomField>

@@ -1,0 +1,67 @@
+<template>
+    <lightning-card title="단계 전환 게이트" icon-name="standard:opportunity_stage">
+        <div slot="actions">
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                alternative-text="새로고침"
+                title="새로고침"
+                onclick={handleRefresh}>
+            </lightning-button-icon>
+        </div>
+        <div class="slds-p-around_medium">
+            <template lwc:if={loading}>
+                <lightning-spinner alternative-text="로딩 중..."></lightning-spinner>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <div class="slds-text-color_error">{errorMessage}</div>
+            </template>
+
+            <template lwc:if={hasResult}>
+                <div class="slds-m-bottom_medium">
+                    <strong>현재 단계:</strong> <lightning-badge label={result.currentStage}></lightning-badge>
+                    <span class="slds-m-horizontal_x-small">→</span>
+                    <strong>다음 단계:</strong> <lightning-badge label={result.nextStage} variant={nextBadgeVariant}></lightning-badge>
+                </div>
+
+                <template lwc:if={hasRules}>
+                    <ul class="slds-has-dividers_around-space">
+                        <template for:each={result.rules} for:item="rule">
+                            <li key={rule.label} class="slds-item slds-p-around_small">
+                                <div class="slds-grid slds-grid_align-spread">
+                                    <div>
+                                        <lightning-icon
+                                            icon-name={rule.iconName}
+                                            size="x-small"
+                                            variant={rule.iconVariant}
+                                            class="slds-m-right_x-small">
+                                        </lightning-icon>
+                                        <strong>{rule.label}</strong>
+                                    </div>
+                                </div>
+                                <template lwc:if={rule.showHint}>
+                                    <div class="slds-text-color_weak slds-m-left_large slds-m-top_xx-small">
+                                        {rule.hintText}
+                                    </div>
+                                </template>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template lwc:else>
+                    <template lwc:if={isPreWonStage}>
+                        <div class="slds-notify slds-notify_alert slds-theme_info slds-p-around_small">
+                            협상 완료시 [수주]로 전환하세요.
+                        </div>
+                    </template>
+                    <template lwc:elseif={isTerminalStage}>
+                        <div class="slds-text-color_weak">최종 단계입니다.</div>
+                    </template>
+                    <template lwc:else>
+                        <div class="slds-text-color_weak">이 단계에 게이트 룰이 정의되지 않았습니다.</div>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,265 @@
+<apex:page standardController="Quote" extensions="QuotePdfController" renderAs="pdf"
+    showHeader="false" sidebar="false" standardStylesheets="false"
+    applyBodyTag="false" applyHtmlTag="false" docType="html-5.0">
+<html lang="ko">
+<head>
+<style type="text/css">
+@font-face {
+    font-family: 'Nanum';
+    src: url('{!URLFOR($Resource.NanumGothicFont, "NanumGothic-Regular.ttf")}') format('truetype');
+}
+@page { size: A4; margin: 14mm 13mm 12mm 13mm; }
+body {
+    font-family: 'Nanum', 'Arial Unicode MS', sans-serif;
+    color: #222;
+    font-size: 9pt;
+    line-height: 1.4;
+}
+table { width: 100%; border-collapse: collapse; }
+
+/* 헤더 */
+.header-table td { vertical-align: top; }
+.company-name { font-size: 18pt; font-weight: bold; letter-spacing: 0.05em; }
+.company-sub  { color: #666; font-size: 9pt; margin-top: 3px; }
+.doc-title    { font-size: 24pt; font-weight: bold; text-align: right; letter-spacing: 0.4em; padding-right: 0.4em; }
+.doc-meta     { text-align: right; color: #666; font-size: 8.5pt; margin-top: 4px; }
+
+/* 메타 */
+.meta-table { margin-top: 10px; border-top: 2px solid #222; border-bottom: 1px solid #222; }
+.meta-table th, .meta-table td { border: 1px solid #cfcfcf; padding: 5px 8px; }
+.meta-table th { width: 14%; background: #f3f3f3; text-align: center; font-weight: bold; }
+
+/* 섹션 타이틀 */
+.section-title {
+    margin-top: 14px; margin-bottom: 5px;
+    padding: 5px 9px; background: #222; color: #fff;
+    font-weight: bold; font-size: 9.5pt; letter-spacing: 0.05em;
+}
+
+/* info-table */
+.info-table th, .info-table td { border: 1px solid #cfcfcf; padding: 5px 8px; vertical-align: top; }
+.info-table th { width: 14%; background: #f7f7f7; text-align: center; font-weight: bold; }
+
+/* items-table */
+.items-table { margin-top: 4px; border-top: 2px solid #222; border-bottom: 1px solid #222; }
+.items-table th, .items-table td { border: 1px solid #cfcfcf; padding: 5px 6px; }
+.items-table th { background: #f3f3f3; text-align: center; font-weight: bold; }
+.items-table td.center { text-align: center; }
+.items-table td.right  { text-align: right; white-space: nowrap; }
+.product-code { color: #888; font-size: 8pt; margin-top: 2px; }
+
+/* totals-wrap */
+.totals-wrap { margin-top: 8px; }
+.totals-wrap td.totals-left  { width: 56%; vertical-align: top; padding-right: 8px; }
+.totals-wrap td.totals-right { width: 44%; vertical-align: top; }
+.note-box { border: 1px solid #cfcfcf; min-height: 86px; padding: 8px 10px; }
+.note-title { font-weight: bold; margin-bottom: 4px; color: #333; }
+.note-empty { color: #999; }
+.totals-table th, .totals-table td { border: 1px solid #cfcfcf; padding: 5px 8px; }
+.totals-table th { background: #f7f7f7; text-align: center; width: 45%; font-weight: bold; }
+.totals-table td { text-align: right; white-space: nowrap; }
+.totals-table tr.grand-total th, .totals-table tr.grand-total td {
+    background: #222; color: #fff; font-weight: bold; font-size: 10pt;
+}
+.korean-amount {
+    margin-top: 4px; padding: 6px 8px;
+    border: 1px solid #222; background: #fafafa;
+    text-align: center; font-weight: bold; font-size: 10pt; letter-spacing: 0.05em;
+}
+
+/* 푸터 */
+.footer-table { margin-top: 14px; border-top: 1px solid #222; }
+.footer-table td { padding-top: 7px; font-size: 8.5pt; color: #333; vertical-align: top; }
+.footer-table .brand-line { font-weight: bold; font-size: 10pt; color: #222; }
+.footer-table .brand-info { color: #555; margin-top: 2px; }
+.stamp-box {
+    border: 1px solid #999; width: 88px; height: 56px;
+    text-align: center; color: #888; font-size: 8pt; padding-top: 22px;
+}
+.empty-state { color: #888; }
+
+/* AE 사인 */
+.ae-sign {
+    text-align: right; padding: 6px 10px;
+    border: 1px solid #cfcfcf; background: #fafafa;
+    margin-top: 6px; font-size: 8.5pt;
+}
+.ae-sign .ae-name { font-weight: bold; font-size: 10pt; color: #222; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<table class="header-table">
+    <tr>
+        <td style="width:55%;">
+            <div class="company-name">{!brandCompany}</div>
+            <div class="company-sub">{!brandSubtitle}</div>
+        </td>
+        <td style="width:45%;">
+            <div class="doc-title">견 적 서</div>
+            <div class="doc-meta">
+                <apex:outputText value="{0,date,yyyy.MM.dd}"><apex:param value="{!TODAY()}"/></apex:outputText> 발행
+            </div>
+        </td>
+    </tr>
+</table>
+
+<!-- 메타 -->
+<table class="meta-table">
+    <tr>
+        <th>견 적 명</th><td>{!quote.Name}</td>
+        <th>견적번호</th><td>{!quoteNumber}</td>
+    </tr>
+    <tr>
+        <th>견적일자</th>
+        <td><apex:outputText value="{0,date,yyyy.MM.dd}"><apex:param value="{!TODAY()}"/></apex:outputText></td>
+        <th>유효기간</th>
+        <td><apex:outputText value="{0,date,yyyy.MM.dd}"><apex:param value="{!quote.ExpirationDate}"/></apex:outputText></td>
+    </tr>
+</table>
+
+<!-- 1. 수신처 (고객사) -->
+<div class="section-title">1. 수 신 처 (고객사)</div>
+<table class="info-table">
+    <tr>
+        <th>상   호</th><td>{!accountName}</td>
+        <th>사업자번호</th><td>{!accountBizNumber}</td>
+    </tr>
+    <tr>
+        <th>대 표 자</th><td>{!accountCEO}</td>
+        <th>연 락 처</th><td>{!accountPhone}</td>
+    </tr>
+    <tr>
+        <th>주   소</th><td colspan="3">{!accountAddress}</td>
+    </tr>
+</table>
+
+<!-- 2. 거래 개요 -->
+<div class="section-title">2. 거 래 개 요</div>
+<table class="info-table">
+    <tr>
+        <th>연결 기회</th><td>{!opportunityName}</td>
+        <th>영업 단계</th><td>{!opportunityStage}</td>
+    </tr>
+    <tr>
+        <th>견적 상태</th><td>{!statusLabel}</td>
+        <th>편집 횟수</th><td>{!aeEditCount}회 (AE 검토 반영)</td>
+    </tr>
+    <tr>
+        <th>AE 담당</th>
+        <td colspan="3">{!aeName} &nbsp; · &nbsp; {!aeEmail} &nbsp; · &nbsp; {!aePhone}</td>
+    </tr>
+</table>
+
+<!-- 3. 견적 품목 -->
+<div class="section-title">3. 견 적 품 목</div>
+<table class="items-table">
+    <thead>
+        <tr>
+            <th style="width:6%">No.</th>
+            <th style="width:38%">품 &nbsp; 목</th>
+            <th style="width:9%">수량</th>
+            <th style="width:15%">단가</th>
+            <th style="width:14%">할인</th>
+            <th style="width:18%">공급가액</th>
+        </tr>
+    </thead>
+    <tbody>
+        <apex:repeat value="{!lines}" var="line">
+            <tr>
+                <td class="center">{!line.seq}</td>
+                <td>
+                    <div>{!line.productName}</div>
+                    <div class="product-code">{!line.productCode}</div>
+                </td>
+                <td class="right"><apex:outputText value="{0,number,###,##0}"><apex:param value="{!line.quantity}"/></apex:outputText></td>
+                <td class="right"><apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!line.unitPrice}"/></apex:outputText></td>
+                <td class="right"><apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!line.discountAmount}"/></apex:outputText></td>
+                <td class="right"><apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!line.lineNetTotal}"/></apex:outputText></td>
+            </tr>
+        </apex:repeat>
+        <apex:outputPanel rendered="{!hasNoLines}" layout="none">
+            <tr><td colspan="6" class="center empty-state">견적 품목이 없습니다.</td></tr>
+        </apex:outputPanel>
+    </tbody>
+</table>
+
+<!-- 비고 + 합계 -->
+<table class="totals-wrap">
+    <tr>
+        <td class="totals-left">
+            <div class="note-box">
+                <div class="note-title">비 고</div>
+                <apex:outputPanel rendered="{!hasDescription}">
+                    <apex:outputText value="{!descriptionHtml}" escape="false"/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!NOT(hasDescription)}">
+                    <span class="note-empty">상기 금액은 부가세 별도이며, 사양 변경 시 재견적이 필요합니다. 본 견적은 발행일로부터 유효기간까지 가격이 보장됩니다.</span>
+                </apex:outputPanel>
+            </div>
+        </td>
+        <td class="totals-right">
+            <table class="totals-table">
+                <tr>
+                    <th>품목 소계</th>
+                    <td><apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!subtotal}"/></apex:outputText></td>
+                </tr>
+                <tr>
+                    <th>할 인 액</th>
+                    <td>- <apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!totalDiscount}"/></apex:outputText></td>
+                </tr>
+                <tr>
+                    <th>세 &nbsp; 금</th>
+                    <td><apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!taxAmount}"/></apex:outputText></td>
+                </tr>
+                <tr class="grand-total">
+                    <th>총 견적금액</th>
+                    <td>KRW <apex:outputText value="{0,number,###,###,##0}"><apex:param value="{!grandTotal}"/></apex:outputText></td>
+                </tr>
+            </table>
+            <div class="korean-amount">{!netTotalKorean}</div>
+        </td>
+    </tr>
+</table>
+
+<!-- 4. 거래 조건 -->
+<div class="section-title">4. 거 래 조 건</div>
+<table class="info-table">
+    <tr>
+        <th>결제 조건</th><td>납품 후 30일 현금 (협의 가능)</td>
+        <th>운     송</th><td>별도 협의</td>
+    </tr>
+    <tr>
+        <th>유효 기간</th>
+        <td colspan="3">발행일로부터 <apex:outputText value="{0,date,yyyy.MM.dd}"><apex:param value="{!quote.ExpirationDate}"/></apex:outputText> 까지 가격 보장</td>
+    </tr>
+</table>
+
+<!-- AE 사인 -->
+<div class="ae-sign">
+    담당 AE &nbsp;
+    <span class="ae-name">{!aeName}</span>
+    &nbsp; · &nbsp; {!aePhone} &nbsp; · &nbsp; {!aeEmail}
+</div>
+
+<!-- 푸터 + 직인 -->
+<table class="footer-table">
+    <tr>
+        <td style="width:72%;">
+            <div class="brand-line">공급자: {!brandCompany}</div>
+            <div class="brand-info">
+                사업자번호 {!brandRegNumber} &nbsp;·&nbsp; 대표자 {!brandCEO} &nbsp;·&nbsp; {!brandPhone} &nbsp;·&nbsp; {!brandEmail}
+            </div>
+            <div class="brand-info">{!brandAddress}</div>
+        </td>
+        <td style="width:13%; text-align:right; padding-right:8px; padding-top:24px;">공급자 확인</td>
+        <td style="width:15%;">
+            <div class="stamp-box">서명 / 직인</div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+</apex:page>

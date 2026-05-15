@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>세일즈 도우미</masterLabel>
+    <description>콕피트 상단 자연어 입력창 (COCKPIT-003). 5종 기술 Agentforce 라인 시연용. v66 ExternalCopilot 한계 우회 — Apex Invocable Action 직접 호출.</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+</LightningComponentBundle>

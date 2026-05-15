@@ -1,0 +1,17 @@
+<template>
+    <!-- Floating Action Button — chatbotFab 좌측에 배치 -->
+    <button class={fabClass} onclick={handleToggle} title="전화 Lead 등록">
+        <span class="fab__icon">{fabIcon}</span>
+    </button>
+
+    <!-- 전화 Lead 등록 모달 (중앙) -->
+    <template lwc:if={isOpen}>
+        <div class="lead-backdrop" onclick={handleClose}></div>
+        <div class="lead-modal" role="dialog" aria-modal="true">
+            <button class="lead-modal__close" onclick={handleClose} title="닫기">✕</button>
+            <div class="lead-modal__body">
+                <c-phone-lead-intake></c-phone-lead-intake>
+            </div>
+        </div>
+    </template>
+</template>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>입금·회수·미수금 현황 통합 조회. mode=today(오늘 입금) / week(최근 7일 회수) / account(특정 고객사 잔액) / atrisk(미수금 상위). 사용자가 "오늘 입금", "이번주 회수", "OO사 잔액", "미수 큰 데" 같은 자연어로 물을 때 사용.</description>
+    <invocationTarget>PaymentCheckAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Check Payments</masterLabel>
+</GenAiFunction>

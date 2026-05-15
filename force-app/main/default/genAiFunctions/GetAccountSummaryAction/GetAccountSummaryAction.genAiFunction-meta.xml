@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Account 한 곳의 영업 360 요약을 반환합니다. 사업자번호/대표자/신용한도/외부신용점수/누적미수금/장기미수 여부, 진행중 Opp·Order 건수. accountId 우선, 없으면 accountName 부분 일치. 사용자가 특정 고객사 이름이나 미수금/신용한도를 물을 때 사용.</description>
+    <invocationTarget>GetAccountSummaryAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Get Account Summary</masterLabel>
+</GenAiFunction>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_4</activeVersionIdentifier>
+    <description>PHONE Lead 통화메모 자유텍스트에서 7필드(company/contactName/contactTitle/phone/partName/quantity/requestedDate) JSON 추출. D26 일관 — 코드 펜스 금지 명문화.</description>
+    <developerName>CallMemoExtract</developerName>
+    <masterLabel>Call Memo Extract</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>당신은 한국 B2B 제조업 영업의 통화 메모 분석가입니다.
+다음 통화 메모 자유텍스트에서 6개 필드를 추출해 JSON 으로 반환하세요.
+
+== 통화 메모 ==
+{!$Input:Memo}
+
+== 추출 필드 (7개, 한국어 원문 그대로 유지) ==
+1. company: 고객사명 (한국 회사명, &quot;(주)&quot; 등 법인 표기 포함 가능). 없으면 빈문자열.
+2. contactName: 담당자 **이름만** 추출 (직급/호칭은 contactTitle 로 분리, 호칭 &quot;씨&quot;/&quot;님&quot;은 항상 제거).
+   - 풀네임(성+이름)이 있으면 이름만: &quot;김국진씨&quot; → &quot;김국진&quot;, &quot;김국진 사장&quot; → &quot;김국진&quot;, &quot;박민수 과장&quot; → &quot;박민수&quot;.
+   - 풀네임 없이 성+직급만 있으면 통째로 (성 단독 금지): &quot;김사장님&quot; → &quot;김사장&quot;, &quot;김 대리&quot; → &quot;김 대리&quot;.
+   없으면 빈문자열.
+3. contactTitle: 직급만 (대리/과장/차장/부장/팀장/이사/상무/전무/사장/대표 등). 호칭 &quot;씨&quot;/&quot;님&quot; 제외. 메모에 직급 표기가 없으면 빈문자열.
+4. phone: 휴대전화 (010-XXXX-XXXX 형태). 없으면 빈문자열.
+5. partName: 부품·제품명 (예: &quot;베어링 6204&quot;, &quot;정밀가공품&quot;, &quot;샤프트&quot;). 모델 번호 포함 가능. 없으면 빈문자열.
+6. quantity: 수량 (숫자만, 단위 제거. 예: &quot;100&quot;, &quot;50&quot;). 없으면 빈문자열.
+7. requestedDate: 납기 자유 표현 (예: &quot;다음달 말까지&quot;, &quot;3주 내&quot;, &quot;7월 말&quot;). 한국어 원문 그대로. 없으면 빈문자열.
+
+== 출력 규칙 ==
+1. 마크다운 코드 펜스(```), 부가 설명, JSON 외 텍스트 절대 금지. JSON 객체 하나만 출력.
+2. 추출 불확실하면 빈문자열로. 추측 금지.
+3. company 는 메모 첫 부분에 자주 등장. contactName 은 일반적으로 회사명 뒤. phone 은 010- 패턴 우선.
+4. requestedDate 는 절대 날짜로 변환하지 말 것. 한국어 원문 표현 유지.
+
+== Output JSON Schema (정확히 이 형태) ==
+{&quot;company&quot;:&quot;&quot;,&quot;contactName&quot;:&quot;&quot;,&quot;contactTitle&quot;:&quot;&quot;,&quot;phone&quot;:&quot;&quot;,&quot;partName&quot;:&quot;&quot;,&quot;quantity&quot;:&quot;&quot;,&quot;requestedDate&quot;:&quot;&quot;}
+</content>
+        <inputs>
+            <apiName>Memo</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Memo</masterLabel>
+            <referenceName>Input:Memo</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_4</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

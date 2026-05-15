@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+
+    <assignments>
+        <name>Handle_DML_Error</name>
+        <label>Handle DML Error</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>var_ErrorMessage</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Screen_Error</targetReference>
+        </connector>
+    </assignments>
+
+    <choices>
+        <name>Choice_Channel_Email</name>
+        <choiceText>이메일</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>EMAIL</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Choice_Channel_Phone</name>
+        <choiceText>전화</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>PHONE</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Choice_Channel_Visit</name>
+        <choiceText>방문</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>VISIT</stringValue>
+        </value>
+    </choices>
+
+    <description>Lead 표준 New 버튼 한국형 오버라이드. 회사명/담당자/직책/전화/채널/메모 입력 → Source_Channel__c·Status='신규' 디폴트 세팅으로 Lead 생성. FR-LEAD-001.</description>
+    <environments>Default</environments>
+    <interviewLabel>새 리드 등록 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Lead 신규</label>
+    <processType>Flow</processType>
+
+    <recordCreates>
+        <name>Create_Lead</name>
+        <label>Lead 생성</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Screen_Success</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Handle_DML_Error</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Company</field>
+            <value>
+                <elementReference>Input_Company</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>Input_Description</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LastName</field>
+            <value>
+                <elementReference>Input_LastName</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Phone</field>
+            <value>
+                <elementReference>Input_Phone</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Source_Channel__c</field>
+            <value>
+                <elementReference>Input_Channel</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>신규</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Title</field>
+            <value>
+                <elementReference>Input_Title</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Lead</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+
+    <screens>
+        <name>Screen_Error</name>
+        <label>오류</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Error_Header</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(194, 57, 52);&quot;&gt;&lt;b style=&quot;font-size: 18px;&quot;&gt;리드 생성에 실패했습니다&lt;/b&gt;&lt;/span&gt;&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>Error_Message</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;i&gt;{!var_ErrorMessage}&lt;/i&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;이전&lt;/b&gt; 버튼으로 돌아가 입력을 확인하거나 &lt;b&gt;완료&lt;/b&gt;로 닫으세요.&lt;/p&gt;</fieldText>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <screens>
+        <name>Screen_Input</name>
+        <label>Lead</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Lead</targetReference>
+        </connector>
+        <fields>
+            <name>Input_Header</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;b style=&quot;font-size: 18px;&quot;&gt;신규 리드 등록&lt;/b&gt;&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>Input_Company</name>
+            <fieldType>InputField</fieldType>
+            <fieldText>회사명</fieldText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <dataType>String</dataType>
+        </fields>
+        <fields>
+            <name>Input_LastName</name>
+            <fieldType>InputField</fieldType>
+            <fieldText>담당자명</fieldText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <dataType>String</dataType>
+        </fields>
+        <fields>
+            <name>Input_Title</name>
+            <fieldType>InputField</fieldType>
+            <fieldText>직책</fieldText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>false</isRequired>
+            <dataType>String</dataType>
+        </fields>
+        <fields>
+            <name>Input_Phone</name>
+            <fieldType>InputField</fieldType>
+            <fieldText>전화</fieldText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>false</isRequired>
+            <dataType>String</dataType>
+        </fields>
+        <fields>
+            <name>Input_Channel</name>
+            <fieldType>DropdownBox</fieldType>
+            <fieldText>인입 채널</fieldText>
+            <choiceReferences>Choice_Channel_Phone</choiceReferences>
+            <choiceReferences>Choice_Channel_Visit</choiceReferences>
+            <choiceReferences>Choice_Channel_Email</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>Choice_Channel_Phone</defaultSelectedChoiceReference>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_Description</name>
+            <fieldType>LargeTextArea</fieldType>
+            <fieldText>메모 / 요청사항</fieldText>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+
+    <screens>
+        <name>Screen_Success</name>
+        <label>완료</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Success_Header</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(46, 132, 74);&quot;&gt;✓&lt;/span&gt; &lt;b style=&quot;font-size: 18px;&quot;&gt;리드가 생성되었습니다&lt;/b&gt;&lt;/p&gt;</fieldText>
+        </fields>
+        <fields>
+            <name>Success_Message</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;새 Lead ID: &lt;b&gt;{!Create_Lead.Id}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;완료&lt;/b&gt; 후 Lead 리스트에서 새 항목을 확인하세요.&lt;/p&gt;</fieldText>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Screen_Input</targetReference>
+        </connector>
+    </start>
+
+    <status>Active</status>
+
+    <variables>
+        <name>var_ErrorMessage</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

@@ -1,0 +1,133 @@
+.bl-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #565656;
+    margin-bottom: 0.15rem;
+}
+
+.bl-quote-header {
+    background-color: #fafafa;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+}
+
+.bl-header-cell {
+    padding: 0.4rem 0.5rem;
+}
+
+.bl-header-cell strong {
+    font-size: 0.95rem;
+}
+
+.bl-empty {
+    padding: 2rem;
+    text-align: center;
+    color: #565656;
+    border: 1px dashed #c5c5c5;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.bl-totals {
+    border-top: 2px solid #e5e5e5;
+    padding-top: 0.75rem;
+    max-width: 420px;
+    margin-left: auto;
+}
+
+.bl-totals__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    font-size: 0.95rem;
+}
+
+.bl-totals__net {
+    border-top: 1px solid #c5c5c5;
+    padding-top: 0.6rem;
+    margin-top: 0.3rem;
+    font-size: 1.15rem;
+}
+
+.bl-actions {
+    padding: 0.6rem 0.8rem;
+    background-color: #f4f7fa;
+    border-radius: 4px;
+    border-left: 3px solid #0070d2;
+}
+
+/* FR-AR-003 — AR 헤더 + 신용한도 경고 */
+.bl-ar-header {
+    background-color: #fff8e6;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    border-left: 3px solid #d4a017;
+}
+
+.bl-ar-header[data-credit-exceeded="true"] {
+    background-color: #fdebec;
+    border-left-color: #c23934;
+}
+
+.bl-ar-cell {
+    padding: 0.35rem 0.5rem;
+}
+
+.bl-ar-cell strong {
+    font-size: 0.95rem;
+}
+
+.bl-ar-warning {
+    background-color: #fdebec;
+    border-left: 4px solid #c23934;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+    color: #6e1f1c;
+    font-size: 0.9rem;
+}
+
+.bl-ar-warning__icon {
+    font-size: 1.15rem;
+    margin-right: 0.3rem;
+}
+
+.bl-email-body-input {
+    width: 100%;
+    min-height: 380px;
+    padding: 0.6rem 0.8rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    resize: vertical;
+}
+
+/* Day13 #4 — AI/PDF 로딩 오버레이 */
+.bl-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9001;
+    border-radius: 6px;
+}
+.bl-loading-box {
+    background: white;
+    padding: 1.2rem 1.6rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 240px;
+    position: relative;
+}
+.bl-loading-text {
+    color: #4b46c2;
+    font-weight: 500;
+    font-size: 0.92rem;
+    text-align: center;
+    margin-top: 2.2rem;
+}

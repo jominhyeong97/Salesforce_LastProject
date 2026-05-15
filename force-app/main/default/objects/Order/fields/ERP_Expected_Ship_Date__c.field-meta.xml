@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ERP_Expected_Ship_Date__c</fullName>
+    <description>ERP 측이 보고한 예상 출고일. ERP 동기화(OrderErpSyncService.syncOrders)가 ErpSyncResult.expectedShipDate 로 채움. null 이면 "미정" — 사유는 ERP_Delay_Reason__c 참조. D38 Phase 2.</description>
+    <inlineHelpText>ERP가 보고한 실제 예상 출고일. 약속 납기일(EndDate) 대비 갭 비교용.</inlineHelpText>
+    <label>ERP 예상 출고일</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

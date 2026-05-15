@@ -1,0 +1,128 @@
+:host {
+    --brand: #1B96FF;
+    --brand-dark: #0176D3;
+    --success: #2E844A;
+    --warning: #FE9339;
+    --error: #BA0517;
+    --gray-2: #F3F3F3;
+    --gray-3: #DDDBDA;
+    --gray-4: #706E6B;
+    --gray-5: #181818;
+    --r: 4px;
+}
+
+/* ── 점수 카드 ── */
+.bl-card {
+    border: 1px solid var(--gray-3);
+    border-radius: var(--r);
+    background: white;
+    overflow: hidden;
+}
+.bl-card_high,
+.bl-card_mid,
+.bl-card_low,
+.bl-card_none { background: white; }
+
+.bl-card::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: var(--gray-4);
+}
+.bl-card_high::before { background: var(--error); }
+.bl-card_mid::before  { background: var(--warning); }
+.bl-card_low::before  { background: var(--success); }
+.bl-card_none::before { background: var(--gray-4); }
+
+.bl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.85rem 1rem 0.5rem;
+}
+.bl-label {
+    font-size: 0.78rem;
+    color: var(--gray-4);
+    letter-spacing: 0.03em;
+}
+.bl-score {
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--gray-5);
+    line-height: 1.1;
+}
+
+/* ── badge (chip 스타일) ── */
+.bl-badge {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    border: 1px solid;
+}
+.bl-badge_high { background: #FCE8E9; color: var(--error); border-color: #F4BCC0; }
+.bl-badge_mid  { background: #FEF2E5; color: #8A4B0A; border-color: #FACFA1; }
+.bl-badge_low  { background: #EBF7EE; color: var(--success); border-color: #C5E8CF; }
+.bl-badge_none { background: var(--gray-2); color: var(--gray-5); border-color: var(--gray-3); }
+
+/* ── 점수 바 ── */
+.bl-bar {
+    height: 6px;
+    background: var(--gray-2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 1rem 0.6rem;
+}
+.bl-bar-fill {
+    height: 100%;
+    background: var(--brand);
+    transition: width 0.5s ease;
+}
+.bl-card_high .bl-bar-fill { background: var(--error); }
+.bl-card_mid  .bl-bar-fill { background: var(--warning); }
+.bl-card_low  .bl-bar-fill { background: var(--success); }
+.bl-card_none .bl-bar-fill { background: var(--gray-4); }
+
+/* ── 메타 (생산 상태/납기일/동기화) ── */
+.bl-meta {
+    padding: 0 1rem 0.85rem;
+    font-size: 0.83rem;
+    border-top: 1px solid var(--gray-2);
+}
+.bl-meta-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--gray-2);
+}
+.bl-meta-item:last-child { border-bottom: none; }
+.bl-meta-label { color: var(--gray-4); }
+.bl-meta-value { font-weight: 500; color: var(--gray-5); }
+
+/* ── ERP 신호 영역 ── */
+.bl-section { padding: 0 0.3rem; }
+.bl-list {
+    list-style: disc;
+    padding-left: 1.4rem;
+    margin: 0;
+}
+.bl-list li {
+    padding: 0.2rem 0;
+    font-size: 0.85rem;
+    color: var(--gray-5);
+}
+
+/* D38 Phase 2 — ERP 예상 출고일/사유 강조 */
+.bl-meta-item_erp .bl-meta-label,
+.bl-meta-item_erp-reason .bl-meta-label {
+    color: var(--brand-dark);
+    font-weight: 600;
+}
+.bl-meta-item_erp .bl-meta-value {
+    font-weight: 600;
+}
+.bl-erp-undecided {
+    color: var(--error);
+    font-weight: 600;
+}

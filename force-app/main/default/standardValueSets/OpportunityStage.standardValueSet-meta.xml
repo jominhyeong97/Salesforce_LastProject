@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+
+    <!-- 한도정밀 6단계 (한국어 active) -->
+    <standardValue>
+        <fullName>발굴</fullName>
+        <closed>false</closed>
+        <default>true</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>true</isActive>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>견적 작성</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>true</isActive>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>견적 발송</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>true</isActive>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>협상</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>BestCase</forecastCategory>
+        <isActive>true</isActive>
+        <probability>80</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>수주</fullName>
+        <closed>true</closed>
+        <default>false</default>
+        <forecastCategory>Closed</forecastCategory>
+        <isActive>true</isActive>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>실주</fullName>
+        <closed>true</closed>
+        <default>false</default>
+        <forecastCategory>Omitted</forecastCategory>
+        <isActive>true</isActive>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+
+    <!-- 표준 영문 (inactive — 새 record 생성 picklist 미노출) -->
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualification</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Needs Analysis</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Value Proposition</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Id. Decision Makers</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Perception Analysis</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>Pipeline</forecastCategory>
+        <isActive>false</isActive>
+        <probability>70</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal/Price Quote</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>BestCase</forecastCategory>
+        <isActive>false</isActive>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Negotiation/Review</fullName>
+        <closed>false</closed>
+        <default>false</default>
+        <forecastCategory>BestCase</forecastCategory>
+        <isActive>false</isActive>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Won</fullName>
+        <closed>true</closed>
+        <default>false</default>
+        <forecastCategory>Closed</forecastCategory>
+        <isActive>false</isActive>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Lost</fullName>
+        <closed>true</closed>
+        <default>false</default>
+        <forecastCategory>Omitted</forecastCategory>
+        <isActive>false</isActive>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+</StandardValueSet>

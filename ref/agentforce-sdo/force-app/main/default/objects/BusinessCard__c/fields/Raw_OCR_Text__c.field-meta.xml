@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Raw_OCR_Text__c</fullName>
+    <description>LLM이 명함에서 verbatim으로 읽은 전체 텍스트. 추적성 / 재매핑용.</description>
+    <label>Raw OCR Text</label>
+    <length>32768</length>
+    <required>false</required>
+    <type>LongTextArea</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

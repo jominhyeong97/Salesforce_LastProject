@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Address__c</fullName>
+    <description>1차 릴리즈에서는 우편번호+도/시/도로명을 단일 필드에 verbatim 저장. 향후 5분해 가능.</description>
+    <label>Address</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+</CustomField>

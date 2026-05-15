@@ -1,0 +1,98 @@
+<template>
+    <lightning-card title="입금 등록 (분할 가능)" icon-name="utility:moneybag">
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-m-vertical_medium">
+                    <lightning-spinner alternative-text="조회 중..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <p class="slds-text-color_destructive slds-m-bottom_x-small">{errorMessage}</p>
+            </template>
+
+            <template lwc:if={hasSummary}>
+                <!-- 진행 카드 -->
+                <div class="slds-box bl-summary">
+                    <div class="bl-head">
+                        <div class="bl-amounts">
+                            <div class="bl-row">
+                                <span class="bl-label">청구액</span>
+                                <span class="bl-value">{totalAmount}</span>
+                            </div>
+                            <div class="bl-row">
+                                <span class="bl-label">누적 입금</span>
+                                <span class="bl-value bl-value_paid">{totalPaid}</span>
+                            </div>
+                            <div class="bl-row">
+                                <span class="bl-label">잔액</span>
+                                <span class="bl-value bl-value_outstanding">{outstanding}</span>
+                            </div>
+                        </div>
+                        <span class={statusBadgeClass}>{statusBadgeLabel}</span>
+                    </div>
+                    <div class="bl-bar">
+                        <div class="bl-bar-fill" style={progressStyle}></div>
+                    </div>
+                    <div class="bl-progress-label">{progressLabel}</div>
+                </div>
+
+                <!-- 입금 폼 -->
+                <div class="slds-m-top_medium">
+                    <h4 class="slds-text-title_caps slds-m-bottom_x-small">입금 등록</h4>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning-input type="date" label="입금일" value={todayIso}
+                                             onchange={handleDateChange} max={todayIso}>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning-input type="number" label="입금액 (₩)" value={paidAmount}
+                                             onchange={handleAmountChange} min="0" formatter="decimal">
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning-input type="text" label="비고" value={memo}
+                                             onchange={handleMemoChange}
+                                             placeholder="예) 1차 / 2차 / 잔금">
+                            </lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-m-top_small">
+                        <lightning-button label="등록" variant="brand"
+                                          onclick={handleSubmit}
+                                          disabled={isSubmitting}>
+                        </lightning-button>
+                    </div>
+                </div>
+
+                <!-- 입금 이력 -->
+                <template lwc:if={hasPayments}>
+                    <div class="slds-m-top_medium">
+                        <h4 class="slds-text-title_caps slds-m-bottom_x-small">입금 이력</h4>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th>입금일</th>
+                                    <th class="slds-text-align_right">금액</th>
+                                    <th>상태</th>
+                                    <th>비고</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={paymentRows} for:item="p">
+                                    <tr key={p.id}>
+                                        <td>{p.paidDate}</td>
+                                        <td class="slds-text-align_right">{p.paidAmount}</td>
+                                        <td>{p.status}</td>
+                                        <td>{p.memo}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

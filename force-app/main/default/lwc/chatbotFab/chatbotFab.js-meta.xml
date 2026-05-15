@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>세일즈 도우미 FAB</masterLabel>
+    <description>Floating chatbot FAB — 둥둥 떠다니는 동그라미 아이콘, 클릭 시 채팅 패널 펼침. (Day 13 #6 prototype)</description>
+    <targets>
+        <target>lightning__HomePage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+</LightningComponentBundle>

@@ -1,0 +1,73 @@
+<template>
+    <lightning-card title="영업 파이프라인" icon-name="standard:opportunity">
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="새로고침"
+            onclick={handleRefresh}
+            disabled={isLoading}>
+        </lightning-button-icon>
+
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-m-vertical_medium">
+                    <lightning-spinner alternative-text="로딩 중..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <p class="slds-text-color_destructive">{errorMessage}</p>
+            </template>
+
+            <template lwc:if={hasPipeline}>
+                <!-- Summary -->
+                <div class="pl-total">
+                    <div class="pl-total__left">
+                        <span class="pl-total__label">진행중</span>
+                        <span class="pl-total__count">{totalCount}건</span>
+                    </div>
+                    <div class="pl-total__right">
+                        <span class="pl-total__label">총 금액</span>
+                        <span class="pl-total__amount">{totalAmountText}</span>
+                    </div>
+                </div>
+
+                <!-- Horizontal funnel bar — amount 비중 기준 -->
+                <div class="pl-funnel" role="img" aria-label="단계별 금액 비중">
+                    <template for:each={pipelineRows} for:item="r">
+                        <div
+                            key={r.stageName}
+                            class={r.segClass}
+                            style={r.segStyle}
+                            data-stage={r.stageName}
+                            onclick={handleStageClick}
+                            title={r.tooltip}>
+                            <template lwc:if={r.showInlineLabel}>
+                                <span class="pl-funnel__label">{r.stageName}</span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Stage details grid -->
+                <ul class="pl-stages">
+                    <template for:each={pipelineRows} for:item="r">
+                        <li
+                            key={r.stageName}
+                            class={r.cardClass}
+                            data-stage={r.stageName}
+                            onclick={handleStageClick}
+                            tabindex="0">
+                            <span class="pl-stages__dot" style={r.dotStyle}></span>
+                            <span class="pl-stages__name">{r.stageName}</span>
+                            <span class="pl-stages__count">{r.oppCount}<span class="pl-stages__count-unit">건</span></span>
+                            <span class="pl-stages__amount">{r.amountText}</span>
+                        </li>
+                    </template>
+                </ul>
+
+                <p class="pl-hint">단계 클릭 → Opportunity 목록</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

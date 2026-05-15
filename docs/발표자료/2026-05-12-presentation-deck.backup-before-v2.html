@@ -1,0 +1,3714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>한도정밀 L2C · Sales Cockpit — Salesforce Dev Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ===========================================
+   THEME — Salesforce SLDS Palette
+   =========================================== */
+:root {
+    /* Salesforce signature */
+    --sf-cloud:        #00A1E0;
+    --sf-blue:         #1589EE;
+    --sf-blue-dark:    #0070D2;
+    --sf-navy:         #032E61;
+    --sf-navy-2:       #16325C;
+    --sf-success:      #04844B;
+    --sf-warning:      #FE9339;
+    --sf-error:        #C23934;
+    --sf-gold:         #FFB75D;
+
+    /* Surfaces */
+    --bg-page:         #FFFFFF;
+    --bg-soft:         #F4F6F9;
+    --bg-deep:         #061C3F;
+
+    /* Text */
+    --text-primary:    #080707;
+    --text-secondary:  #3E3E3C;
+    --text-muted:      #706E6B;
+    --text-inverse:    #FFFFFF;
+
+    /* Lines */
+    --line:            #DDDBDA;
+    --line-strong:     #C9C7C5;
+
+    /* Typography */
+    --font-display:    "Archivo", "Noto Sans KR", sans-serif;
+    --font-body:       "Noto Sans KR", "Archivo", sans-serif;
+    --font-mono:       "JetBrains Mono", monospace;
+
+    /* Sizes (clamp) */
+    --title-size:    clamp(1.5rem, 5vw, 4rem);
+    --h2-size:       clamp(1.25rem, 3.5vw, 2.5rem);
+    --h3-size:       clamp(1rem, 2.5vw, 1.75rem);
+    --body-size:     clamp(0.72rem, 1.05vw, 1rem);
+    --small-size:    clamp(0.6rem, 0.85vw, 0.82rem);
+    --tiny-size:     clamp(0.55rem, 0.75vw, 0.72rem);
+    --code-size:     clamp(0.6rem, 0.85vw, 0.88rem);
+
+    /* Spacing */
+    --slide-padding: clamp(1.2rem, 3vw, 3rem);
+    --content-gap:   clamp(0.5rem, 1.4vw, 1.4rem);
+    --element-gap:   clamp(0.3rem, 0.9vw, 0.9rem);
+
+    /* Motion */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.7s;
+}
+
+/* ===========================================
+   VIEWPORT-BASE (mandatory)
+   =========================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--bg-page);
+    -webkit-font-smoothing: antialiased;
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    padding: var(--slide-padding);
+    background: var(--bg-page);
+}
+
+/* Swiss grid background — subtle */
+.slide::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(3,46,97,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(3,46,97,0.04) 1px, transparent 1px);
+    background-size: clamp(40px, 6vw, 80px) clamp(40px, 6vw, 80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@media (max-height: 700px) {
+    :root {
+        --slide-padding: clamp(0.9rem, 2.4vw, 1.8rem);
+        --title-size: clamp(1.3rem, 4vw, 2.5rem);
+        --h2-size: clamp(1.05rem, 2.5vw, 1.8rem);
+        --body-size: clamp(0.65rem, 0.95vw, 0.9rem);
+        --code-size: clamp(0.55rem, 0.8vw, 0.8rem);
+    }
+}
+@media (max-height: 600px) {
+    :root {
+        --slide-padding: clamp(0.65rem, 1.8vw, 1.3rem);
+        --title-size: clamp(1.1rem, 3.5vw, 2rem);
+        --body-size: clamp(0.6rem, 0.85vw, 0.8rem);
+    }
+    .nav-dots, .decorative { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+img { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+/* ===========================================
+   CHROME — topbar / bottombar / main
+   =========================================== */
+.topbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(0.8rem, 2vw, 2.2rem);
+    padding-bottom: clamp(0.55rem, 1.3vw, 1.1rem);
+    border-bottom: 2px solid var(--sf-navy);
+    position: relative;
+    z-index: 2;
+}
+.brand {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(0.7rem, 1.05vw, 0.95rem);
+    letter-spacing: 0.04em;
+    color: var(--sf-navy);
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.brand-dot {
+    display: inline-block;
+    width: clamp(8px, 1vw, 12px);
+    height: clamp(8px, 1vw, 12px);
+    background: var(--sf-cloud);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.crumbs {
+    font-family: var(--font-mono);
+    font-size: clamp(0.55rem, 0.8vw, 0.72rem);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.crumbs .now { color: var(--sf-blue-dark); font-weight: 700; }
+.crumbs .sep { color: var(--line-strong); margin: 0 0.6em; }
+.deck-num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+    color: var(--sf-navy);
+    letter-spacing: 0.04em;
+}
+
+.main {
+    position: relative;
+    z-index: 1;
+    padding: clamp(0.8rem, 1.8vw, 1.8rem) 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.bottombar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding-top: clamp(0.55rem, 1.3vw, 1.1rem);
+    border-top: 2px solid var(--sf-navy);
+    position: relative;
+    z-index: 2;
+    gap: 1rem;
+}
+.stack-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.6rem, 1.8vw, 1.8rem);
+    font-family: var(--font-mono);
+    font-size: clamp(0.6rem, 0.9vw, 0.78rem);
+    color: var(--sf-navy);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.stack-strip span { display: inline-flex; align-items: center; gap: 0.4em; }
+.stack-strip span:not(:last-child)::after {
+    content: "/";
+    color: var(--sf-cloud);
+    margin-left: 0.8em;
+    font-weight: 700;
+}
+.section-tag {
+    font-family: var(--font-mono);
+    font-size: clamp(0.58rem, 0.85vw, 0.75rem);
+    color: var(--sf-error);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* ===========================================
+   REVEAL ANIMATIONS
+   =========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity var(--duration-normal) var(--ease-out-expo),
+        transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.13s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.21s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.29s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.37s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.45s; }
+.slide.visible .reveal:nth-child(7) { transition-delay: 0.53s; }
+.slide.visible .reveal:nth-child(8) { transition-delay: 0.61s; }
+
+/* Animated red underline under accent words */
+.underline-accent {
+    position: relative;
+    display: inline-block;
+}
+.underline-accent::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0.05em;
+    width: 100%;
+    height: 0.06em;
+    background: var(--sf-error);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.9s 0.6s var(--ease-out-expo);
+}
+.slide.visible .underline-accent::after { transform: scaleX(1); }
+
+/* ===========================================
+   TITLE PATTERNS
+   =========================================== */
+.slide-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: var(--h2-size);
+    color: var(--sf-navy);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.slide-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-blue-dark);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.4em;
+    display: flex; align-items: center; gap: 0.5em;
+}
+.slide-eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: clamp(8px, 1vw, 12px);
+    height: clamp(8px, 1vw, 12px);
+    background: var(--sf-cloud);
+    flex-shrink: 0;
+}
+
+/* ===========================================
+   COVER SLIDE (Slide 1) — bigger, no chrome
+   =========================================== */
+.slide.cover {
+    grid-template-rows: auto 1fr auto;
+}
+.cover .main {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+    padding: clamp(1.5rem, 4vw, 3.5rem) 0;
+}
+.cover h1 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2.2rem, 6.8vw, 6.5rem);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    color: var(--sf-navy);
+}
+.cover h1 .accent { color: var(--sf-cloud); display: inline-block; }
+.cover .meta-grid {
+    display: flex; flex-direction: column;
+    gap: clamp(0.4rem, 1vw, 0.9rem);
+}
+.cover .meta-row {
+    display: flex; align-items: baseline; gap: 0.7rem;
+    padding-bottom: clamp(0.4rem, 0.9vw, 0.7rem);
+    border-bottom: 1px solid var(--line);
+}
+.cover .meta-row .marker {
+    width: clamp(8px, 1vw, 12px);
+    height: clamp(8px, 1vw, 12px);
+    background: var(--sf-cloud);
+    flex-shrink: 0;
+}
+.cover .meta-row .k {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    min-width: 5em;
+}
+.cover .meta-row .v {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+    color: var(--sf-navy);
+    line-height: 1.3;
+}
+.cover .lede {
+    grid-column: 1 / -1;
+    font-size: clamp(0.85rem, 1.3vw, 1.18rem);
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 920px;
+    margin-top: clamp(0.8rem, 2vw, 1.6rem);
+    padding-top: clamp(0.8rem, 1.6vw, 1.4rem);
+    border-top: 1px solid var(--line);
+}
+.cover .lede strong { color: var(--sf-navy); font-weight: 700; }
+
+/* ===========================================
+   TOC (Slide 2)
+   =========================================== */
+.toc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.5rem, 1.3vw, 1.2rem);
+    flex: 1;
+    min-height: 0;
+    align-content: stretch;
+}
+.toc-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(0.6rem, 1.4vw, 1.2rem);
+    padding: clamp(0.55rem, 1.3vw, 1rem) clamp(0.7rem, 1.5vw, 1.1rem);
+    border-bottom: 1px solid var(--line);
+    border-left: 4px solid var(--sf-cloud);
+    background: var(--bg-page);
+    transition: background 0.3s, border-left-color 0.3s;
+}
+.toc-row:hover {
+    background: var(--bg-soft);
+    border-left-color: var(--sf-error);
+}
+.toc-row .num {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    color: var(--sf-navy);
+    line-height: 1;
+    min-width: 1.5em;
+}
+.toc-row .title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+    color: var(--sf-navy);
+    line-height: 1.2;
+    margin-bottom: 0.15em;
+}
+.toc-row .desc {
+    font-size: var(--small-size);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.toc-row .pages {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-blue-dark);
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+
+/* ===========================================
+   GRID HELPERS
+   =========================================== */
+.col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--content-gap); flex: 1; min-height: 0; }
+.col-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--content-gap); flex: 1; min-height: 0; }
+.col-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--content-gap); flex: 1; min-height: 0; }
+.col-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(0.4rem, 1vw, 0.9rem); flex: 1; min-height: 0; }
+
+/* ===========================================
+   CONTENT CARDS — Swiss flat
+   =========================================== */
+.swiss-card {
+    background: var(--bg-page);
+    border-top: 4px solid var(--sf-cloud);
+    border-bottom: 1px solid var(--line);
+    padding: clamp(0.7rem, 1.6vw, 1.2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 0;
+}
+.swiss-card.navy   { border-top-color: var(--sf-navy); }
+.swiss-card.blue   { border-top-color: var(--sf-blue); }
+.swiss-card.gold   { border-top-color: var(--sf-gold); }
+.swiss-card.error  { border-top-color: var(--sf-error); }
+.swiss-card.green  { border-top-color: var(--sf-success); }
+.swiss-card .num {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-blue-dark);
+    letter-spacing: 0.1em;
+    font-weight: 700;
+}
+.swiss-card .title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--h3-size);
+    color: var(--sf-navy);
+    line-height: 1.2;
+}
+.swiss-card .body {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+.swiss-card .body strong { color: var(--text-primary); font-weight: 700; }
+
+/* Bullet list */
+.list-clean {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.3rem, 0.8vw, 0.65rem);
+}
+.list-clean li {
+    font-size: var(--body-size);
+    line-height: 1.55;
+    color: var(--text-secondary);
+    padding-left: 1.1em;
+    position: relative;
+}
+.list-clean li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.55em;
+    width: 7px; height: 7px;
+    background: var(--sf-cloud);
+}
+.list-clean li strong { color: var(--text-primary); font-weight: 700; }
+
+/* Lede quote */
+.lede-quote {
+    font-family: var(--font-display);
+    font-size: clamp(0.95rem, 1.6vw, 1.4rem);
+    font-weight: 600;
+    color: var(--sf-navy);
+    line-height: 1.45;
+    padding: clamp(0.6rem, 1.4vw, 1.1rem) clamp(0.9rem, 1.8vw, 1.5rem);
+    border-left: 4px solid var(--sf-cloud);
+    background: var(--bg-soft);
+}
+
+/* Philosophy tag */
+.tag-philosophy {
+    background: var(--sf-navy);
+    color: var(--text-inverse);
+    padding: 0.55rem 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    line-height: 1.4;
+    display: flex;
+    gap: 0.6em;
+    align-items: center;
+    margin-top: auto;
+}
+.tag-philosophy::before {
+    content: "◆";
+    color: var(--sf-cloud);
+}
+
+/* ===========================================
+   PERSONA / PAIN
+   =========================================== */
+.persona-grid {
+    display: grid;
+    grid-template-columns: 0.82fr 1.18fr;
+    gap: clamp(0.7rem, 1.6vw, 1.4rem);
+    flex: 1;
+    min-height: 0;
+}
+.persona-card {
+    background: var(--sf-navy);
+    color: var(--text-inverse);
+    padding: clamp(0.9rem, 2vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    position: relative;
+    overflow: hidden;
+}
+.persona-card::before {
+    content: ""; position: absolute;
+    top: -30%; right: -25%;
+    width: 70%; height: 80%;
+    background: radial-gradient(circle, rgba(0,161,224,0.35) 0%, transparent 65%);
+}
+.persona-card .avatar {
+    width: clamp(44px, 5.5vw, 70px);
+    height: clamp(44px, 5.5vw, 70px);
+    background: var(--sf-cloud);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+    font-weight: 900;
+    color: white;
+    flex-shrink: 0;
+    position: relative; z-index: 1;
+}
+.persona-card h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.2rem, 2.4vw, 1.85rem);
+    line-height: 1.1;
+    position: relative; z-index: 1;
+}
+.persona-card .role {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+}
+.persona-card .bio {
+    font-size: var(--body-size);
+    color: rgba(255,255,255,0.82);
+    line-height: 1.55;
+    position: relative; z-index: 1;
+}
+.persona-card .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: auto;
+    position: relative; z-index: 1;
+}
+.persona-card .stat {
+    padding: 0.5rem 0.7rem;
+    border-top: 1px solid rgba(0,161,224,0.45);
+}
+.persona-card .stat .k {
+    font-family: var(--font-mono);
+    font-size: var(--tiny-size);
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+}
+.persona-card .stat .v {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--body-size);
+    color: #fff;
+}
+
+.pain-list { display: flex; flex-direction: column; gap: clamp(0.35rem, 0.9vw, 0.7rem); }
+.pain {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.7rem;
+    align-items: center;
+    padding: clamp(0.5rem, 1.2vw, 0.9rem) clamp(0.7rem, 1.4vw, 1rem);
+    border-left: 4px solid var(--sf-error);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-page);
+}
+.pain .icon {
+    width: clamp(28px, 3.2vw, 38px);
+    height: clamp(28px, 3.2vw, 38px);
+    background: rgba(194,57,52,0.10);
+    color: var(--sf-error);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+    flex-shrink: 0;
+}
+.pain .text strong {
+    display: block;
+    color: var(--sf-navy);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--body-size);
+    line-height: 1.3;
+    margin-bottom: 0.1em;
+}
+.pain .text span {
+    color: var(--text-muted);
+    font-size: var(--small-size);
+    line-height: 1.45;
+}
+
+/* ===========================================
+   MATRIX
+   =========================================== */
+.matrix {
+    display: grid;
+    grid-template-columns: 0.9fr 1.05fr 1.05fr;
+    border-top: 2px solid var(--sf-navy);
+    border-bottom: 2px solid var(--sf-navy);
+    flex: 1;
+    min-height: 0;
+    background: var(--bg-page);
+}
+.matrix > div {
+    padding: clamp(0.45rem, 1vw, 0.85rem) clamp(0.6rem, 1.3vw, 1rem);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--body-size);
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+}
+.matrix > div:nth-last-child(-n+3) { border-bottom: none; }
+.matrix .hd {
+    background: var(--sf-navy);
+    color: var(--text-inverse);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--small-size);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.matrix .hd.cloud { background: var(--sf-blue-dark); }
+.matrix .hd.good  { background: var(--sf-success); }
+.matrix .row-label {
+    background: var(--bg-soft);
+    color: var(--sf-navy);
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+.matrix .asis  { color: var(--sf-error); }
+.matrix .tobe  { color: var(--text-primary); font-weight: 500; }
+
+/* ===========================================
+   PHILOSOPHY 3-CARDS
+   =========================================== */
+.phil-card {
+    background: var(--bg-page);
+    border-top: 6px solid var(--sf-cloud);
+    padding: clamp(0.9rem, 2vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--line);
+}
+.phil-card:nth-child(2) { border-top-color: var(--sf-navy); }
+.phil-card:nth-child(3) { border-top-color: var(--sf-warning); }
+.phil-card .big-num {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    font-weight: 900;
+    color: var(--sf-cloud);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+.phil-card:nth-child(2) .big-num { color: var(--sf-navy); }
+.phil-card:nth-child(3) .big-num { color: var(--sf-warning); }
+.phil-card h3 {
+    font-family: var(--font-display);
+    font-size: var(--h3-size);
+    font-weight: 800;
+    color: var(--sf-navy);
+    line-height: 1.2;
+}
+.phil-card p {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+.chip-row { display: flex; gap: 0.4em; flex-wrap: wrap; margin-top: auto; }
+.chip {
+    padding: 0.25em 0.7em;
+    font-family: var(--font-mono);
+    font-size: var(--tiny-size);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--sf-cloud);
+    color: var(--sf-blue-dark);
+    background: rgba(0,161,224,0.06);
+    font-weight: 600;
+}
+.chip.navy  { border-color: var(--sf-navy);    color: var(--sf-navy);    background: rgba(3,46,97,0.05); }
+.chip.gold  { border-color: var(--sf-warning); color: #8C4A00;          background: rgba(254,147,57,0.08); }
+
+/* ===========================================
+   FEATURE PAGE A — anchor
+   =========================================== */
+.feature-anchor {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(0.6rem, 1.4vw, 1.2rem);
+    margin-bottom: clamp(0.7rem, 1.4vw, 1.2rem);
+    padding-bottom: clamp(0.55rem, 1.2vw, 1rem);
+    border-bottom: 1px solid var(--line);
+}
+.feature-anchor .badge {
+    background: var(--sf-navy);
+    color: white;
+    padding: 0.4em 0.85em;
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+.feature-anchor h2 {
+    font-family: var(--font-display);
+    font-size: var(--h2-size);
+    font-weight: 900;
+    color: var(--sf-navy);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.feature-anchor .stage {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-error);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* Feature page A body — 2col */
+.feat-a-grid {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: clamp(0.6rem, 1.4vw, 1.2rem);
+    flex: 1;
+    min-height: 0;
+}
+
+/* ===========================================
+   LOGIC (Page B) layout
+   =========================================== */
+.logic-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(0.7rem, 1.6vw, 1.4rem);
+    flex: 1;
+    min-height: 0;
+}
+.steps { display: flex; flex-direction: column; gap: clamp(0.4rem, 1vw, 0.85rem); }
+.step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+    padding: clamp(0.45rem, 1.1vw, 0.85rem) 0;
+}
+.step .stepnum {
+    width: clamp(28px, 3.2vw, 38px);
+    height: clamp(28px, 3.2vw, 38px);
+    background: var(--sf-navy);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+    flex-shrink: 0;
+}
+.step .info strong {
+    display: block;
+    color: var(--sf-navy);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--body-size);
+    line-height: 1.3;
+    margin-bottom: 0.15em;
+}
+.step .info span {
+    color: var(--text-secondary);
+    font-size: var(--small-size);
+    line-height: 1.5;
+}
+.note {
+    font-size: var(--small-size);
+    color: var(--text-secondary);
+    line-height: 1.55;
+    padding: 0.55rem 0.8rem;
+    border-left: 3px solid var(--sf-cloud);
+    background: var(--bg-soft);
+}
+.note strong { color: var(--sf-navy); font-weight: 700; }
+.note.error { border-left-color: var(--sf-error); }
+.note.error strong { color: var(--sf-error); }
+
+pre.code {
+    background: var(--sf-navy);
+    color: #E5F0FB;
+    padding: clamp(0.6rem, 1.3vw, 1rem) clamp(0.7rem, 1.5vw, 1.15rem);
+    font-family: var(--font-mono);
+    font-size: var(--code-size);
+    line-height: 1.55;
+    overflow: hidden;
+    border-top: 3px solid var(--sf-cloud);
+}
+pre.code .kw  { color: #6EC1FF; }
+pre.code .str { color: #FFD480; }
+pre.code .cmt { color: #93B7D8; font-style: italic; }
+pre.code .fn  { color: #B9F0C8; }
+pre.code .ty  { color: #FFB1F0; }
+.code-label {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-blue-dark);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+.code-label::before {
+    content: ""; display: inline-block;
+    width: clamp(8px,1vw,12px); height: clamp(8px,1vw,12px);
+    background: var(--sf-cloud);
+}
+
+.logic-aside { display: flex; flex-direction: column; gap: clamp(0.5rem, 1.2vw, 0.95rem); min-width: 0; }
+
+/* ===========================================
+   VIDEO PLACEHOLDER (Page C)
+   =========================================== */
+.video-placeholder {
+    flex: 1;
+    min-height: 0;
+    border: 2px solid var(--sf-navy);
+    background:
+        repeating-linear-gradient(45deg, transparent, transparent 14px, rgba(3,46,97,0.03) 14px, rgba(3,46,97,0.03) 28px),
+        var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.7rem, 1.4vw, 1.1rem);
+    padding: clamp(1rem, 2.5vw, 2rem);
+    text-align: center;
+    position: relative;
+}
+.video-placeholder .corner-mark {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: var(--tiny-size);
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+.video-placeholder .corner-mark.tl { top: clamp(0.6rem,1.2vw,1rem); left: clamp(0.6rem,1.2vw,1rem); }
+.video-placeholder .corner-mark.tr { top: clamp(0.6rem,1.2vw,1rem); right: clamp(0.6rem,1.2vw,1rem); }
+.video-placeholder .corner-mark.bl { bottom: clamp(0.6rem,1.2vw,1rem); left: clamp(0.6rem,1.2vw,1rem); }
+.video-placeholder .corner-mark.br { bottom: clamp(0.6rem,1.2vw,1rem); right: clamp(0.6rem,1.2vw,1rem); }
+.video-placeholder .play-icon {
+    width: clamp(56px, 7vw, 100px);
+    height: clamp(56px, 7vw, 100px);
+    background: var(--sf-navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.video-placeholder .play-icon::before {
+    content: "";
+    width: 0; height: 0;
+    border-left: clamp(14px,1.9vw,22px) solid var(--sf-cloud);
+    border-top: clamp(9px,1.3vw,15px) solid transparent;
+    border-bottom: clamp(9px,1.3vw,15px) solid transparent;
+    margin-left: 0.25em;
+}
+.video-placeholder .caption {
+    font-family: var(--font-display);
+    font-size: var(--h3-size);
+    font-weight: 800;
+    color: var(--sf-navy);
+    letter-spacing: -0.01em;
+}
+.video-placeholder .sub {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    max-width: 580px;
+    line-height: 1.6;
+}
+.video-placeholder .sub strong { color: var(--sf-navy); font-weight: 700; }
+.video-placeholder .sub code {
+    font-family: var(--font-mono);
+    background: var(--bg-soft);
+    padding: 0.1em 0.4em;
+    font-size: 0.92em;
+    color: var(--sf-navy);
+}
+.video-placeholder .meta {
+    display: inline-flex;
+    gap: 0.8em;
+    padding: 0.4em 1em;
+    background: var(--sf-error);
+    color: white;
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ===========================================
+   ETC FEATURES (5)
+   =========================================== */
+.etc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    flex: 1;
+    min-height: 0;
+    align-content: start;
+}
+.etc-grid > :nth-child(5) { grid-column: 1 / -1; }
+.etc-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(0.6rem, 1.3vw, 1rem);
+    padding: clamp(0.6rem, 1.3vw, 1rem) clamp(0.7rem, 1.5vw, 1.15rem);
+    border-left: 4px solid var(--sf-cloud);
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+    background: var(--bg-page);
+}
+.etc-row:nth-child(2) { border-left-color: var(--sf-blue); }
+.etc-row:nth-child(3) { border-left-color: var(--sf-error); }
+.etc-row:nth-child(4) { border-left-color: var(--sf-success); }
+.etc-row:nth-child(5) { border-left-color: var(--sf-navy); }
+.etc-row .ico {
+    width: clamp(38px, 4.5vw, 56px);
+    height: clamp(38px, 4.5vw, 56px);
+    background: var(--sf-navy);
+    color: var(--sf-cloud);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.6vw, 1.4rem);
+    font-weight: 900;
+    flex-shrink: 0;
+}
+.etc-row h4 {
+    font-family: var(--font-display);
+    font-size: var(--h3-size);
+    color: var(--sf-navy);
+    font-weight: 800;
+    margin-bottom: 0.15em;
+    line-height: 1.2;
+}
+.etc-row p {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.etc-row p strong { color: var(--text-primary); font-weight: 700; }
+
+/* ===========================================
+   TROUBLESHOOTING
+   =========================================== */
+.trouble-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    flex: 1;
+    min-height: 0;
+    align-content: start;
+}
+.trouble-cell {
+    padding: clamp(0.7rem, 1.5vw, 1.15rem);
+    background: var(--bg-page);
+    border-left: 4px solid var(--line-strong);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-height: 0;
+}
+.trouble-cell.problem  { border-left-color: var(--sf-error); }
+.trouble-cell.cause    { border-left-color: var(--sf-warning); }
+.trouble-cell.fix      { border-left-color: var(--sf-success); background: var(--bg-soft); }
+.trouble-cell.learning { border-left-color: var(--sf-blue-dark); background: var(--bg-soft); }
+.trouble-cell .label {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 0.5em;
+}
+.trouble-cell .label::before {
+    content: ""; display: inline-block;
+    width: clamp(8px,1vw,12px); height: clamp(8px,1vw,12px);
+}
+.trouble-cell.problem  .label { color: var(--sf-error); }
+.trouble-cell.problem  .label::before { background: var(--sf-error); }
+.trouble-cell.cause    .label { color: var(--sf-warning); }
+.trouble-cell.cause    .label::before { background: var(--sf-warning); }
+.trouble-cell.fix      .label { color: var(--sf-success); }
+.trouble-cell.fix      .label::before { background: var(--sf-success); }
+.trouble-cell.learning .label { color: var(--sf-blue-dark); }
+.trouble-cell.learning .label::before { background: var(--sf-blue-dark); }
+.trouble-cell p {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex: 1;
+}
+.trouble-cell p strong { color: var(--text-primary); font-weight: 700; }
+.trouble-cell p code {
+    font-family: var(--font-mono);
+    background: var(--bg-soft);
+    padding: 0.1em 0.4em;
+    font-size: 0.92em;
+    color: var(--sf-navy);
+}
+.trouble-cell.fix p code, .trouble-cell.learning p code {
+    background: white;
+}
+
+/* ===========================================
+   REGRETS
+   =========================================== */
+.regret-list { display: flex; flex-direction: column; gap: clamp(0.5rem, 1.2vw, 0.95rem); flex: 1; min-height: 0; }
+.regret-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(0.6rem, 1.4vw, 1.1rem);
+    align-items: center;
+    padding: clamp(0.6rem, 1.3vw, 1rem) clamp(0.85rem, 1.7vw, 1.3rem);
+    border-left: 4px solid var(--sf-warning);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-page);
+}
+.regret-row .seq {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+    font-weight: 900;
+    color: var(--sf-warning);
+    line-height: 1;
+    min-width: 1.4em;
+}
+.regret-row h4 {
+    font-family: var(--font-display);
+    font-size: var(--h3-size);
+    font-weight: 800;
+    color: var(--sf-navy);
+    margin-bottom: 0.2em;
+    line-height: 1.25;
+}
+.regret-row p {
+    font-size: var(--body-size);
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+.regret-row p strong { color: var(--text-primary); font-weight: 700; }
+.regret-row p code {
+    font-family: var(--font-mono);
+    background: var(--bg-soft);
+    padding: 0.1em 0.4em;
+    font-size: 0.92em;
+    color: var(--sf-navy);
+}
+
+/* ===========================================
+   QnA
+   =========================================== */
+.qna-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    gap: clamp(1rem, 2.2vw, 2.2rem);
+    position: relative;
+}
+.qna-main h1 {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    color: var(--sf-navy);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    position: relative;
+}
+.qna-main h1 .amp {
+    color: var(--sf-cloud);
+    margin: 0 0.15em;
+}
+.qna-main .msg {
+    font-size: clamp(0.95rem, 1.6vw, 1.3rem);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 700px;
+}
+.qna-main .sign {
+    padding-top: clamp(0.7rem, 1.4vw, 1.1rem);
+    border-top: 2px solid var(--sf-cloud);
+    width: clamp(200px, 28vw, 340px);
+    font-family: var(--font-mono);
+    font-size: var(--body-size);
+    color: var(--sf-navy);
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+
+/* ===========================================
+   CLOSING
+   =========================================== */
+.closing-main {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+    align-items: center;
+    padding: clamp(1rem, 3vw, 2.5rem) 0;
+    flex: 1;
+}
+.closing-main h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 6vw, 5.8rem);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--sf-navy);
+}
+.closing-main h1 .accent { color: var(--sf-cloud); display: inline-block; }
+.closing-main p {
+    font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-top: clamp(0.8rem, 1.8vw, 1.4rem);
+    max-width: 580px;
+}
+.closing-next {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1.2vw, 0.95rem);
+}
+.closing-next .step-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: clamp(0.55rem, 1.3vw, 1rem) clamp(0.7rem, 1.5vw, 1.15rem);
+    border-top: 3px solid var(--sf-cloud);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-page);
+}
+.closing-next .step-row .n {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+    color: var(--sf-navy);
+    line-height: 1;
+}
+.closing-next .step-row .k {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: var(--sf-blue-dark);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.15em;
+}
+.closing-next .step-row .v {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--sf-navy);
+    font-size: var(--body-size);
+    line-height: 1.3;
+}
+.closing-next .step-row .arrow {
+    color: var(--sf-cloud);
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 1.6vw, 1.4rem);
+}
+
+/* ===========================================
+   PROGRESS + NAV DOTS
+   =========================================== */
+.progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%; height: 3px;
+    background: linear-gradient(90deg, var(--sf-cloud), var(--sf-blue-dark));
+    z-index: 999;
+    transition: width 0.2s ease;
+}
+.nav-dots {
+    position: fixed;
+    right: clamp(0.5rem, 1.2vw, 1rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    z-index: 990;
+}
+.nav-dots button {
+    width: 8px; height: 8px;
+    background: rgba(3,46,97,0.18);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+}
+.nav-dots button:hover { background: var(--sf-cloud); transform: scale(1.4); }
+.nav-dots button.active { background: var(--sf-blue-dark); transform: scale(1.5); }
+@media (max-width: 700px) { .nav-dots { display: none; } }
+
+/* ===========================================
+   INLINE EDITING (opt-in: user said Yes)
+   =========================================== */
+.edit-hotzone {
+    position: fixed;
+    top: 0; left: 0;
+    width: 80px; height: 80px;
+    z-index: 10000;
+    cursor: pointer;
+}
+.edit-toggle {
+    position: fixed;
+    top: clamp(0.7rem, 1.4vw, 1.1rem);
+    left: clamp(0.7rem, 1.4vw, 1.1rem);
+    width: clamp(40px, 4vw, 52px);
+    height: clamp(40px, 4vw, 52px);
+    background: var(--sf-navy);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, background 0.3s ease;
+    z-index: 10001;
+    display: flex; align-items: center; justify-content: center;
+}
+.edit-toggle.show, .edit-toggle.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.edit-toggle.active { background: var(--sf-success); }
+.edit-banner {
+    position: fixed;
+    top: clamp(0.7rem, 1.4vw, 1.1rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--sf-success);
+    color: white;
+    padding: 0.5em 1.2em;
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    z-index: 10001;
+    transition: transform 0.3s ease;
+    display: flex; align-items: center; gap: 1em;
+}
+.edit-banner.active { transform: translateX(-50%) translateY(0); }
+.edit-banner .hint { opacity: 0.85; font-size: 0.9em; }
+
+body.edit-active [contenteditable="true"] {
+    outline: 1px dashed var(--sf-cloud);
+    outline-offset: 2px;
+    cursor: text;
+}
+body.edit-active [contenteditable="true"]:focus {
+    outline: 2px solid var(--sf-cloud);
+    background: rgba(0,161,224,0.04);
+}
+</style>
+</head>
+<body>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="슬라이드 네비게이션"></nav>
+
+<!-- Inline editing chrome (user opted in) -->
+<div class="edit-hotzone" title="편집 모드 토글 (E)"></div>
+<button class="edit-toggle" id="editToggle" title="편집 모드 토글 (E)" aria-label="편집 모드 토글">✎</button>
+<div class="edit-banner" id="editBanner">
+    <span>EDIT MODE</span>
+    <span class="hint">Ctrl+S 저장 · E 종료</span>
+</div>
+
+<!-- ============================================================
+     SLIDE 1 — COVER
+     ============================================================ -->
+<section class="slide cover">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span><span contenteditable="true">HANDO PRECISION × SALESFORCE</span></div>
+        <div class="crumbs"><span class="now">COVER</span><span class="sep">/</span>CONTEXT<span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">01 / 31</div>
+    </div>
+    <div class="main">
+        <div style="display: contents;">
+            <h1 class="reveal" contenteditable="true">영업이 결정하고,<br /><span class="accent">시스템이 책임진다.</span></h1>
+            <div class="meta-grid reveal">
+                <div class="meta-row"><span class="marker"></span><span class="k">Persona</span><span class="v" contenteditable="true">AE 김민수 · 한도정밀</span></div>
+                <div class="meta-row"><span class="marker"></span><span class="k">Domain</span><span class="v" contenteditable="true">B2B 부품·소재 제조업</span></div>
+                <div class="meta-row"><span class="marker"></span><span class="k">Scope</span><span class="v" contenteditable="true">Lead → 견적 → 주문 → 입금</span></div>
+                <div class="meta-row"><span class="marker"></span><span class="k">Date</span><span class="v">2026.05.14</span></div>
+            </div>
+            <p class="lede reveal" contenteditable="true">
+                한도정밀 L2C 사례 — <strong>Lead-to-Cash 한 흐름</strong>을 한국 B2B 영업 정서에 맞춰 새로 짰습니다.
+                영업은 자연어 한 줄로 묻고, 시스템은 데이터·기록·납기 책임을 집니다.
+                Flow · Apex · LWC · Prompt Builder · Agentforce 5종 기술이 한 제품으로 묶여 있습니다.
+            </p>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip">
+            <span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span>
+        </div>
+        <div class="section-tag">SECTION 00 · COVER</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 2 — TOC
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTENTS</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">02 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">목차 · TABLE OF CONTENTS</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.4rem);">8개 섹션, 한눈에</h2>
+        <div class="toc-grid">
+            <div class="toc-row reveal"><div class="num">01</div><div><div class="title" contenteditable="true">서비스 설명 · 차별화</div><div class="desc">왜 만들었고, 왜 다른가</div></div><div class="pages">p.03–04</div></div>
+            <div class="toc-row reveal"><div class="num">02</div><div><div class="title" contenteditable="true">페르소나 · As-is/To-be</div><div class="desc">AE 김민수의 일과와 pain</div></div><div class="pages">p.05–06</div></div>
+            <div class="toc-row reveal"><div class="num">03</div><div><div class="title" contenteditable="true">설계 철학 3가지</div><div class="desc">한국식 · AE 중심 · 단계 가이드</div></div><div class="pages">p.07</div></div>
+            <div class="toc-row reveal"><div class="num">04</div><div><div class="title" contenteditable="true">주요 기능 5건</div><div class="desc">각 3페이지 — 무엇·로직·시연</div></div><div class="pages">p.08–22</div></div>
+            <div class="toc-row reveal"><div class="num">05</div><div><div class="title" contenteditable="true">기타 기능 한눈에</div><div class="desc">Lead·게이트·미수·결제·디자인</div></div><div class="pages">p.23</div></div>
+            <div class="toc-row reveal"><div class="num">06</div><div><div class="title" contenteditable="true">트러블슈팅 5건</div><div class="desc">문제 → 원인 → 해결 → 학습</div></div><div class="pages">p.24–28</div></div>
+            <div class="toc-row reveal"><div class="num">07</div><div><div class="title" contenteditable="true">아쉬웠던 점</div><div class="desc">남은 4건과 후속 보완 계획</div></div><div class="pages">p.29</div></div>
+            <div class="toc-row reveal"><div class="num">08</div><div><div class="title" contenteditable="true">QnA · 마무리</div><div class="desc">이메일 안내와 다음 단계</div></div><div class="pages">p.30–31</div></div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 00 · CONTENTS</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 3 — SERVICE
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTEXT</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">03 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">01 · 서비스 설명 · 설계 이유</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.4rem);">한국 B2B 부품·소재 제조업을 위한 <span class="underline-accent">영업 콕피트</span></h2>
+        <div class="lede-quote reveal" contenteditable="true" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">
+            영업이 흩어진 메일·엑셀·메신저·ERP를 오가며 "지금 뭐가 급한지" 찾는 데 쓰는 시간을 0으로 만든다.
+            견적·주문·입금 한 흐름은 한 번의 약속 입력만으로 굴러간다.
+        </div>
+        <div class="col-3" style="flex: 0 0 auto;">
+            <div class="swiss-card reveal">
+                <div class="num">/ DOMAIN</div>
+                <div class="title" contenteditable="true">B2B 부품·소재 제조업</div>
+                <p class="body" contenteditable="true">Lead 인입 → 견적 → 수주 → 출하 → 분할 입금. 한국식 영업 사이클 그대로.</p>
+            </div>
+            <div class="swiss-card navy reveal">
+                <div class="num">/ CORE VALUE</div>
+                <div class="title" contenteditable="true">입력 부담 0, 의사결정에 집중</div>
+                <p class="body" contenteditable="true">AE는 약속 납기일 한 번 입력 + 승인·통보 의사결정만. 나머지 데이터는 시스템이 채운다.</p>
+            </div>
+            <div class="swiss-card gold reveal">
+                <div class="num">/ RATIONALE</div>
+                <div class="title" contenteditable="true">한국 영업 정서에 맞춤</div>
+                <p class="body" contenteditable="true">₩·일금 한글, 사업자번호, 분할 입금, 직급 호칭 — 글로벌 SaaS가 흔히 놓치는 부분.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 01 · CONTEXT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 4 — DIFFERENTIATION 4
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTEXT</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">04 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">01 · 차별화 4가지</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.4rem);">경쟁 영업 SaaS와 <span class="underline-accent">무엇이 다른가</span></h2>
+        <div class="col-4">
+            <div class="swiss-card reveal">
+                <div class="num">/ 01</div>
+                <div class="title" contenteditable="true">L2C 한 흐름 통합</div>
+                <p class="body" contenteditable="true">Lead·견적·주문·출하·입금까지 한 화면, 한 데이터 모델. AE가 다른 시스템을 오갈 필요 없음.</p>
+            </div>
+            <div class="swiss-card blue reveal">
+                <div class="num">/ 02</div>
+                <div class="title" contenteditable="true">AI + HITL 안전 정책</div>
+                <p class="body" contenteditable="true">AI는 분석·초안·라우팅만. 가격·금액·확정은 항상 AE 검토. 책임 경계가 명확.</p>
+            </div>
+            <div class="swiss-card navy reveal">
+                <div class="num">/ 03</div>
+                <div class="title" contenteditable="true">외부 통신 0 게이트웨이</div>
+                <p class="body" contenteditable="true">ERP·생산·품질을 인터페이스로 격리. Apex 내부 결정론으로 시연 안정성과 격리 동시 확보.</p>
+            </div>
+            <div class="swiss-card gold reveal">
+                <div class="num">/ 04</div>
+                <div class="title" contenteditable="true">한국 비즈니스 정서</div>
+                <p class="body" contenteditable="true">사업자번호·일금 한글·분할 입금·직급 단일. 한국식 영업 관행을 그대로 데이터 모델에 반영.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 01 · DIFFERENTIATION</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 5 — PERSONA
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTEXT</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">05 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">02 · 페르소나</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">AE 김민수의 일과와 <span class="underline-accent">4가지 pain</span></h2>
+        <div class="persona-grid">
+            <div class="persona-card reveal">
+                <div class="avatar">민</div>
+                <div>
+                    <h3 contenteditable="true">김민수 대리</h3>
+                    <div class="role">한도정밀 · ACCOUNT EXECUTIVE</div>
+                </div>
+                <p class="bio" contenteditable="true">
+                    경력 4년차. 매일 아침 메일 50건·엑셀 3개·카톡 톡방 6개를 훑고
+                    "오늘 뭐가 급한지"를 머릿속에서 재조립한다.
+                </p>
+                <div class="stat-grid">
+                    <div class="stat"><div class="k">담당 고객사</div><div class="v">28社</div></div>
+                    <div class="stat"><div class="k">월 견적</div><div class="v">40~60건</div></div>
+                    <div class="stat"><div class="k">응대 채널</div><div class="v">4종</div></div>
+                    <div class="stat"><div class="k">이메일/일</div><div class="v">~50건</div></div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: clamp(0.4rem,1vw,0.8rem); min-height: 0;">
+                <div class="slide-eyebrow reveal" style="margin-bottom: 0; color: var(--sf-error);">PAIN POINT</div>
+                <div class="pain-list">
+                    <div class="pain reveal">
+                        <div class="icon">📧</div>
+                        <div class="text"><strong contenteditable="true">메일 — RFQ가 받은 편지함에 묻힌다</strong><span contenteditable="true">견적 요청 / 일반 문의 / 광고가 한 통에 섞여 있어 우선순위 판단 시간 ↑</span></div>
+                    </div>
+                    <div class="pain reveal">
+                        <div class="icon">📊</div>
+                        <div class="text"><strong contenteditable="true">엑셀 — 견적 raw가 여러 버전</strong><span contenteditable="true">v3.xlsx, v3-final.xlsx, v3-진짜final.xlsx… 정본이 누구 PC인지 모름</span></div>
+                    </div>
+                    <div class="pain reveal">
+                        <div class="icon">💬</div>
+                        <div class="text"><strong contenteditable="true">메신저 — 고객 응답이 카톡으로 온다</strong><span contenteditable="true">"5% 인하 부탁드려요" → 누가 받았는지·기록되었는지 추적 불가</span></div>
+                    </div>
+                    <div class="pain reveal">
+                        <div class="icon">🏭</div>
+                        <div class="text"><strong contenteditable="true">ERP — 출고일 갱신을 영업이 모른다</strong><span contenteditable="true">고객 전화로 "물건 나갔어요?" 받고 ERP 켜는 흐름. 사전 통보 못 함</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 02 · PERSONA</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 6 — AS-IS / TO-BE
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTEXT</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">06 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">02 · As-is → To-be</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">5가지 pain × <span class="underline-accent">본 시스템 매핑</span></h2>
+        <div class="matrix reveal">
+            <div class="hd">영역 (Pain)</div>
+            <div class="hd cloud">As-is — 흩어진 영업</div>
+            <div class="hd good">To-be — 본 시스템</div>
+
+            <div class="row-label">메일 / RFQ</div>
+            <div class="asis" contenteditable="true">받은 편지함에서 RFQ 직접 찾아 분류</div>
+            <div class="tobe" contenteditable="true">메일 수신 자동 Lead 생성 · 통화 메모 AI 자동 채움</div>
+
+            <div class="row-label">견적 / 엑셀</div>
+            <div class="asis" contenteditable="true">v3-final-진짜.xlsx · 정본이 누구 PC인지 모름</div>
+            <div class="tobe" contenteditable="true">견적 라인 인라인 편집 · 한국식 PDF 자동 · 정본 1곳</div>
+
+            <div class="row-label">고객 응답</div>
+            <div class="asis" contenteditable="true">카톡으로 받은 "재견적" 요청, 기록 누락</div>
+            <div class="tobe" contenteditable="true">이메일 의도 분류 · 재견적 자동 초안 생성</div>
+
+            <div class="row-label">ERP 갭</div>
+            <div class="asis" contenteditable="true">출고일 변동을 영업이 마지막에 안다</div>
+            <div class="tobe" contenteditable="true">약속 납기 vs ERP 분기별 후보 결정론 매칭 · 사전 통보</div>
+
+            <div class="row-label">미수금</div>
+            <div class="asis" contenteditable="true">월말 결산 때 발견. 분할 입금 추적은 수기</div>
+            <div class="tobe" contenteditable="true">60일+ 자동 식별·빨간 띠 · 분할 입금 잔액 자동</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 02 · MATRIX</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 7 — PHILOSOPHY 3
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">COVER<span class="sep">/</span><span class="now">CONTEXT</span><span class="sep">/</span>FEATURES<span class="sep">/</span>TROUBLE<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">07 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">03 · 설계 철학</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">이후 모든 기능에 흐르는 <span class="underline-accent">3가지 thread</span></h2>
+        <div class="col-3">
+            <div class="phil-card reveal">
+                <div class="big-num">01</div>
+                <h3 contenteditable="true">한국식 정서</h3>
+                <p contenteditable="true">₩·일금 한글 표기, 사업자번호 확보 시점, 분할 입금, 직급 호칭. 글로벌 표준이 아니라 한국 영업 관행을 1차 데이터 모델로 채택했다.</p>
+                <div class="chip-row">
+                    <span class="chip">사업자번호</span>
+                    <span class="chip">일금 한글</span>
+                    <span class="chip">분할 입금</span>
+                </div>
+            </div>
+            <div class="phil-card reveal">
+                <div class="big-num">02</div>
+                <h3 contenteditable="true">AE 의사결정 중심</h3>
+                <p contenteditable="true">AI는 분석·초안·라우팅까지만. 가격·납기 확정·승인·통보는 항상 AE의 손에 둔다. 자동화 ≠ 책임 이양이라는 원칙.</p>
+                <div class="chip-row">
+                    <span class="chip navy">자연어 한 줄</span>
+                    <span class="chip navy">AI = 초안</span>
+                    <span class="chip navy">AE = 확정</span>
+                </div>
+            </div>
+            <div class="phil-card reveal">
+                <div class="big-num">03</div>
+                <h3 contenteditable="true">단계별 가이드</h3>
+                <p contenteditable="true">각 단계 전환에서 "다음에 뭘 해야 하는지" 시스템이 안내한다. Lead 발굴 → 견적 작성 전환 시 사업자번호·첨부·납기일 3-조건 자동 점검.</p>
+                <div class="chip-row">
+                    <span class="chip gold">단계 게이트</span>
+                    <span class="chip gold">메시지 가이드</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 03 · DESIGN PHILOSOPHY</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 8 — FEATURE 1 PAGE A
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span><span class="now">FEATURE 01</span><span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">08 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 01</span>
+            <h2 contenteditable="true">영업 콕피트 + 자연어 입력바 (AI 라우터)</h2>
+            <span class="stage">PAGE A · WHAT</span>
+        </div>
+        <div class="feat-a-grid">
+            <div class="lede-quote reveal" contenteditable="true">
+                AE 김민수가 오늘 무엇을 해야 하는지 한눈에 보고, 한 줄 자연어로 묻고 한국어 답을 받는 통합 홈 화면.
+            </div>
+            <div class="col-2">
+                <div class="swiss-card reveal">
+                    <div class="num">/ 왜 도입했나</div>
+                    <p class="body" contenteditable="true">영업의 일과가 메일·엑셀·메신저·ERP <strong>4곳에 흩어져 있어</strong> "지금 뭐가 급한지" 파악에 시간이 든다. 한눈 5카드로 우선순위를 자동 정렬하고, 자연어 입력바 한 개로 모든 데이터 질의를 통합.</p>
+                </div>
+                <div class="swiss-card navy reveal">
+                    <div class="num">/ 5장 한눈 카드</div>
+                    <ul class="list-clean">
+                        <li><strong>우선 처리 Lead</strong> — RFQ 미확인 / 게이트 미통과</li>
+                        <li><strong>위험 주문</strong> — ERP 갭으로 약속 납기 위협</li>
+                        <li><strong>견적 추적</strong> — 발송 후 응답 대기 + 의도 분류</li>
+                        <li><strong>미수금 액션</strong> — 60일+ 장기 미수금 자동 식별</li>
+                        <li><strong>영업 파이프라인</strong> — 단계별 금액 합산</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tag-philosophy reveal" contenteditable="true">
+                설계 철학 태그: AE 의사결정 중심 — 입력은 자연어 한 줄, 데이터 인용은 시스템이 책임
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 01 · COCKPIT — WHAT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 9 — FEATURE 1 PAGE B
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span><span class="now">FEATURE 01</span><span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">09 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 01</span>
+            <h2>자연어 → 3-step AI 라우터</h2>
+            <span class="stage">PAGE B · LOGIC</span>
+        </div>
+        <div class="logic-grid">
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="stepnum">1</div>
+                    <div class="info">
+                        <strong contenteditable="true">도구 선택 (Prompt: AgentRouter)</strong>
+                        <span contenteditable="true">질문 의도를 분석해 5종 Action 중 하나 결정.</span>
+                    </div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">2</div>
+                    <div class="info">
+                        <strong contenteditable="true">Apex Action 호출</strong>
+                        <span contenteditable="true">@AuraEnabled 메서드 자동 실행 · SOQL·집계·필터링 → 구조화된 결과 반환.</span>
+                    </div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">3</div>
+                    <div class="info">
+                        <strong contenteditable="true">자연어 합성 (Prompt: AgentSynthesize)</strong>
+                        <span contenteditable="true">raw 결과 + 원 질문을 함께 LLM에 전달 → 한국어 자연체 응답.</span>
+                    </div>
+                </div>
+                <div class="note reveal">
+                    <strong>진입점 2개, 처리는 1곳</strong> — LWC 입력바의 ReAct LLM 라우터(AgentRouter→Action→AgentSynthesize) · Agentforce 외부 챗봇 — 모두 동일 6개 Apex Invocable 호출. 코드 중복 0.
+                </div>
+            </div>
+            <div class="logic-aside">
+                <div class="code-label">Router 진입 — Apex 5줄</div>
+                <pre class="code reveal"><code><span class="cmt">// AgentRouterController.cls</span>
+<span class="ty">String</span> tool = <span class="fn">LlmRouter.choose</span>(question);
+   <span class="cmt">// 1단계 — 도구 선택</span>
+<span class="ty">Map</span>&lt;<span class="ty">String</span>,<span class="ty">Object</span>&gt; data =
+   <span class="fn">invokeAction</span>(tool, q);
+   <span class="cmt">// 2단계 — Apex Action 실행</span>
+<span class="kw">return</span> <span class="fn">LlmRouter.synthesize</span>(question, data);
+   <span class="cmt">// 3단계 — 한국어 응답 합성</span></code></pre>
+                <div class="note error reveal">
+                    <strong>안전 정책</strong> — LLM은 데이터를 만들지 않는다. SOQL 결과만 인용. 환각 방지 + 출처 명확.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 01 · COCKPIT — LOGIC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 10 — FEATURE 1 PAGE C
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span><span class="now">FEATURE 01</span><span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">10 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 01</span>
+            <h2>시연 영상 — 자연어 라우터</h2>
+            <span class="stage">PAGE C · DEMO</span>
+        </div>
+        <div class="video-placeholder reveal">
+            <div class="corner-mark tl">+</div><div class="corner-mark tr">+</div>
+            <div class="corner-mark bl">+</div><div class="corner-mark br">+</div>
+            <div class="play-icon"></div>
+            <div class="caption" contenteditable="true">"대성기공(주) 물건 나갔나요?"</div>
+            <div class="sub" contenteditable="true">
+                자연어 질의 → AgentRouter가 <code>customer_summary</code> 도구 선택 →
+                고객사 요약·미출고·미수금 동시 조회 → 한국어 자연체 응답.
+                "미출고 주문 3건, 장기 미수금 보유" 카드 표시.
+            </div>
+            <div class="meta">📎 GIF · 15~30s · 추후 첨부</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 01 · COCKPIT — DEMO</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 11 — FEATURE 2 PAGE A
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span><span class="now">FEATURE 02</span><span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">11 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 02</span>
+            <h2 contenteditable="true">사업자등록증 OCR (Prompt Builder 멀티모달)</h2>
+            <span class="stage">PAGE A · WHAT</span>
+        </div>
+        <div class="feat-a-grid">
+            <div class="lede-quote reveal" contenteditable="true">
+                영업 기회 단계에서 사업자등록증 PDF/이미지를 업로드하면
+                사업자번호·대표자·법인명·주소 4필드가 Account에 자동 보강된다.
+            </div>
+            <div class="col-2">
+                <div class="swiss-card reveal">
+                    <div class="num">/ 왜 도입했나</div>
+                    <p class="body" contenteditable="true">한국 B2B 거래는 <strong>사업자번호 확보가 필수</strong>지만 Lead 단계에서 요구하면 단순 견적 문의자가 빠진다. 의사가 확인된 영업 기회 단계로 옮겨두고, 입력은 사진 한 장 업로드로 자동.</p>
+                </div>
+                <div class="swiss-card gold reveal">
+                    <div class="num">/ 자동 보강 4필드</div>
+                    <ul class="list-clean">
+                        <li><strong>사업자등록번호</strong> — XXX-XX-XXXXX</li>
+                        <li><strong>대표자명</strong> — 한글 풀네임</li>
+                        <li><strong>법인명 / 상호</strong> — Account.Name</li>
+                        <li><strong>사업장 주소</strong> — BillingAddress</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tag-philosophy reveal" contenteditable="true">
+                설계 철학 태그: 한국식 정서 + AE 의사결정 중심 — 사업자번호 자동 추출, AE는 검토만
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 02 · OCR — WHAT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 12 — FEATURE 2 PAGE B
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span><span class="now">FEATURE 02</span><span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">12 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 02</span>
+            <h2>Prompt Builder 멀티모달 호출</h2>
+            <span class="stage">PAGE B · LOGIC</span>
+        </div>
+        <div class="logic-grid">
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="stepnum">1</div>
+                    <div class="info"><strong contenteditable="true">첨부 파일 핸들 캡처</strong><span contenteditable="true">ContentDocument ID를 LWC에서 Apex로 전달. ContentVersion 직접 노출 X.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">2</div>
+                    <div class="info"><strong contenteditable="true">WrappedValue로 inputParams 구성</strong><span contenteditable="true">Input:ContentDocument 키로 Prompt Template에 멀티모달 입력 주입.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">3</div>
+                    <div class="info"><strong contenteditable="true">ConnectApi 3-arg + 응답 정제</strong><span contenteditable="true">코드 펜스 stripCodeFences 통과 → JSON 파싱 → Account 업데이트.</span></div>
+                </div>
+                <div class="note reveal">
+                    <strong>5체크리스트</strong> — inputParams / 3-arg / applicationName / isPreview / 에러 처리. 모두 충족해야 멀티모달 통과.
+                </div>
+            </div>
+            <div class="logic-aside">
+                <div class="code-label">멀티모달 호출 — Apex 발췌</div>
+                <pre class="code reveal"><code><span class="ty">ConnectApi.WrappedValue</span> wv =
+   <span class="kw">new</span> <span class="ty">ConnectApi.WrappedValue</span>();
+wv.value = <span class="kw">new</span> <span class="ty">Map</span>&lt;<span class="ty">String</span>,<span class="ty">Object</span>&gt;{
+   <span class="str">'Id'</span> =&gt; contentDocId };
+input.inputParams = <span class="kw">new</span>
+   <span class="ty">Map</span>&lt;<span class="ty">String</span>,<span class="ty">ConnectApi.WrappedValue</span>&gt;{
+   <span class="str">'Input:ContentDocument'</span> =&gt; wv };
+<span class="ty">ConnectApi.EinsteinLLM</span>.
+   <span class="fn">generateMessagesForPromptTemplate</span>(
+      <span class="str">'BusinessLicenseExtract'</span>,
+      <span class="str">''</span>, input);</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 02 · OCR — LOGIC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 13 — FEATURE 2 PAGE C
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span><span class="now">FEATURE 02</span><span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">13 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 02</span>
+            <h2>시연 영상 — 사업자등록증 자동 추출</h2>
+            <span class="stage">PAGE C · DEMO</span>
+        </div>
+        <div class="video-placeholder reveal">
+            <div class="corner-mark tl">+</div><div class="corner-mark tr">+</div>
+            <div class="corner-mark bl">+</div><div class="corner-mark br">+</div>
+            <div class="play-icon"></div>
+            <div class="caption" contenteditable="true">대광건설기계 사업자등록증 업로드</div>
+            <div class="sub" contenteditable="true">
+                <code>docs/samples/business-license/1.jpg</code> 업로드 →
+                Prompt Builder 멀티모달 호출 → 4필드 JSON 추출 →
+                <strong>사업자번호 471-81-00778</strong> 외 3필드 Account에 자동 보강.
+            </div>
+            <div class="meta">📎 GIF · ~20s · 추후 첨부</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 02 · OCR — DEMO</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 14 — FEATURE 3 PAGE A
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span><span class="now">FEATURE 03</span><span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">14 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 03</span>
+            <h2 contenteditable="true">AI 견적 작성 + 의도 분류 + 자동 재견적</h2>
+            <span class="stage">PAGE A · WHAT</span>
+        </div>
+        <div class="feat-a-grid">
+            <div class="lede-quote reveal" contenteditable="true">
+                견적 라인 인라인 편집 · 한국식 PDF 발송 · 고객 응답 의도를 AI가 분류해
+                재견적이면 새 견적 초안을 자동으로 만들어둔다.
+            </div>
+            <div class="col-2">
+                <div class="swiss-card reveal">
+                    <div class="num">/ 왜 도입했나</div>
+                    <p class="body" contenteditable="true">한국 영업의 견적은 <strong>₩ 단위</strong>가 우선이고 일금 한글 표기도 함께 들어간다. 재견적 응답이 오면 AE가 처음부터 다시 작성해야 했음 → AI가 의도 인지 + 가격은 그대로 복제 + 협상 메모만 자동.</p>
+                </div>
+                <div class="swiss-card gold reveal">
+                    <div class="num">/ 한국식 견적 4요소</div>
+                    <ul class="list-clean">
+                        <li><strong>₩ 표기</strong> + 일금 한글 자동 변환</li>
+                        <li><strong>할인 금액 입력</strong> → % 자동 계산</li>
+                        <li><strong>한국식 PDF</strong> — 상단 상호·하단 도장 자리</li>
+                        <li><strong>의도 배지</strong> — 수락 / 재견적 / 기타</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tag-philosophy reveal" contenteditable="true">
+                설계 철학 태그: 한국식 정서(₩·일금 한글) + AE 의사결정 중심(AI 분석만, 가격 결정은 AE)
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 03 · QUOTE — WHAT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 15 — FEATURE 3 PAGE B
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span><span class="now">FEATURE 03</span><span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">15 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 03</span>
+            <h2>이메일 트리거 → 의도 분류 → 자동 초안</h2>
+            <span class="stage">PAGE B · LOGIC</span>
+        </div>
+        <div class="logic-grid">
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="stepnum">1</div>
+                    <div class="info"><strong contenteditable="true">EmailMessage after insert</strong><span contenteditable="true">고객 응답 메일 수신 → Apex Trigger가 비동기 분류 시작.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">2</div>
+                    <div class="info"><strong contenteditable="true">Prompt Template으로 의도 분류</strong><span contenteditable="true">본문을 LLM에 전달 → Intent__c = '재견적' / '수락' / '기타'.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">3</div>
+                    <div class="info"><strong contenteditable="true">재견적이면 자동 초안</strong><span contenteditable="true">원본 견적 라인 복제 + Description에 AI 협상 분석 + (재견적) 접미사.</span></div>
+                </div>
+                <div class="note error reveal">
+                    <strong>가격 안전 정책</strong> — AI는 Description에 자연어 분석만 적는다. 단가·수량·할인은 원본 라인을 그대로 복제. <strong>AE가 수동 확정.</strong>
+                </div>
+            </div>
+            <div class="logic-aside">
+                <div class="code-label">의도 분류 + 자동 초안</div>
+                <pre class="code reveal"><code><span class="cmt">// EmailMessage after insert</span>
+<span class="fn">EmailIntentClassifyService</span>
+   .<span class="fn">classifyAsync</span>(em.Id);
+   <span class="cmt">// Prompt Template으로 분류 — 비동기</span>
+
+<span class="cmt">// 결과: Intent__c = '재견적'</span>
+<span class="fn">QuoteRequoteService</span>
+   .<span class="fn">autoDraftIfRequote</span>(em.Id);
+   <span class="cmt">// 새 견적 초안 자동 생성</span>
+   <span class="cmt">// 원본 라인 그대로 복제 +</span>
+   <span class="cmt">// Description 에 AI 협상 분석</span></code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 03 · QUOTE — LOGIC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 16 — FEATURE 3 PAGE C
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span><span class="now">FEATURE 03</span><span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">16 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 03</span>
+            <h2>시연 영상 — 재견적 자동 초안</h2>
+            <span class="stage">PAGE C · DEMO</span>
+        </div>
+        <div class="video-placeholder reveal">
+            <div class="corner-mark tl">+</div><div class="corner-mark tr">+</div>
+            <div class="corner-mark bl">+</div><div class="corner-mark br">+</div>
+            <div class="play-icon"></div>
+            <div class="caption" contenteditable="true">"5% 인하 부탁드립니다" → 자동 재견적 초안</div>
+            <div class="sub" contenteditable="true">
+                견적 발송 → 고객 메일 응답 → 의도 분류 = <strong>'재견적'</strong> 배지 →
+                새 견적 자동 초안(원본 라인 복제, <code>(재견적)</code> 접미사, Description에 AI 협상 분석) → AE 검토.
+            </div>
+            <div class="meta">📎 GIF · ~30s · 추후 첨부</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 03 · QUOTE — DEMO</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 17 — FEATURE 4 PAGE A
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span><span class="now">FEATURE 04</span><span class="sep">/</span>05</div>
+        <div class="deck-num">17 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 04</span>
+            <h2 contenteditable="true">L2C 자동화 — 견적→주문→ERP 갭 보고</h2>
+            <span class="stage">PAGE A · WHAT</span>
+        </div>
+        <div class="feat-a-grid">
+            <div class="lede-quote reveal" contenteditable="true">
+                견적 '수락' → 라인 자동 복사 → 영업 기회 수주 → 주문 자동 생성 → 약속 납기일 승계 → ERP 동기화 한 번이면 사유·예상 출고일 자동 표시.
+            </div>
+            <div class="col-2">
+                <div class="swiss-card reveal">
+                    <div class="num">/ 왜 도입했나</div>
+                    <p class="body" contenteditable="true"><strong>입력 부담을 0으로 만드는 게 본 시스템의 핵심 가치.</strong> AE는 영업 기회 단계에서 약속 납기일 한 번 입력. 이후는 승인·통보 같은 의사결정만.</p>
+                </div>
+                <div class="swiss-card navy reveal">
+                    <div class="num">/ 자동 흐름 5단</div>
+                    <ul class="list-clean">
+                        <li><strong>① 견적 '수락'</strong> → 라인 → 영업 기회 Products 복사</li>
+                        <li><strong>② 영업 기회 수주</strong> → Order 자동 INSERT</li>
+                        <li><strong>③ 약속 납기일</strong> → Order.EndDate 승계</li>
+                        <li><strong>④ ERP 동기화</strong> → 사유 + 예상 출고일</li>
+                        <li><strong>⑤ 위험 분류</strong> → D+3/+5/+7 · 미생산·미출고·재계획</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tag-philosophy reveal" contenteditable="true">
+                설계 철학 태그: AE 의사결정 중심 + 단계별 가이드 — "납기일을 저장해주세요" 게이트 메시지
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 04 · L2C — WHAT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 18 — FEATURE 4 PAGE B
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span><span class="now">FEATURE 04</span><span class="sep">/</span>05</div>
+        <div class="deck-num">18 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 04</span>
+            <h2>견적 트리거 + 수주 트리거 + ERP 갭</h2>
+            <span class="stage">PAGE B · LOGIC</span>
+        </div>
+        <div class="logic-grid">
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="stepnum">1</div>
+                    <div class="info"><strong contenteditable="true">견적 '수락' 전이 시</strong><span contenteditable="true">QuoteTrigger → 라인 → OpportunityLineItem 자동 복사.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">2</div>
+                    <div class="info"><strong contenteditable="true">영업 기회 수주 전이 시</strong><span contenteditable="true">Order INSERT + EndDate = Promised_Delivery_Date__c 승계 + 라인 복제.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">3</div>
+                    <div class="info"><strong contenteditable="true">ERP 갭 결정론 매칭</strong><span contenteditable="true">주문 고유 ID 해시 → 분기별 후보 풀에서 선택. 같은 주문 = 같은 결과.</span></div>
+                </div>
+                <div class="note reveal">
+                    <strong>약속 납기일 단일 소스</strong> — 영업 기회 1곳에만 저장. 견적·재견적·주문은 모두 이 필드를 참조.
+                </div>
+            </div>
+            <div class="logic-aside">
+                <div class="code-label">납기일 승계 — Apex 발췌</div>
+                <pre class="code reveal"><code><span class="cmt">// 견적 '수락' — 라인 복사</span>
+<span class="kw">if</span> (q.Status == <span class="str">'수락'</span>
+    &amp;&amp; oldStatus != <span class="str">'수락'</span>) {
+   <span class="fn">copyQuoteLinesToOpportunityProducts</span>
+      (q.Id);
+}
+<span class="cmt">// 영업 기회 수주 — 주문 생성</span>
+toCreate.add(<span class="kw">new</span> <span class="ty">Order</span>(
+   Opportunity__c = opp.Id,
+   EndDate = opp.Promised_Delivery_Date__c,
+   <span class="cmt">// ↑ 약속 납기일 승계</span>
+   ...
+));</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 04 · L2C — LOGIC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 19 — FEATURE 4 PAGE C
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span><span class="now">FEATURE 04</span><span class="sep">/</span>05</div>
+        <div class="deck-num">19 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 04</span>
+            <h2>시연 영상 — L2C 자동화 + ERP 갭</h2>
+            <span class="stage">PAGE C · DEMO</span>
+        </div>
+        <div class="video-placeholder reveal">
+            <div class="corner-mark tl">+</div><div class="corner-mark tr">+</div>
+            <div class="corner-mark bl">+</div><div class="corner-mark br">+</div>
+            <div class="play-icon"></div>
+            <div class="caption" contenteditable="true">납기 6/15 → 견적 → 수락 → 주문 → ERP 갭</div>
+            <div class="sub" contenteditable="true">
+                영업 기회 약속 납기일 <strong>6/15</strong> 입력 → 견적 작성 → 라인 자동 복사 → '수락' → 주문 자동 생성 → ERP 동기화 → <strong>"예상 출고 2026-06-20 (약속 6/15 → D+5 지연)"</strong> 표시.
+            </div>
+            <div class="meta">📎 MP4 · ~40s · 추후 첨부</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">FEATURE 04 · L2C — DEMO</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 20 — FEATURE 5 PAGE A
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span><span class="now">FEATURE 05</span></div>
+        <div class="deck-num">20 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 05</span>
+            <h2 contenteditable="true">Lead 인입 AI 자동 추출 + Score 자동화</h2>
+            <span class="stage">PAGE A · WHAT</span>
+        </div>
+        <div class="feat-a-grid">
+            <div class="lede-quote reveal" contenteditable="true">
+                전화 메모·방문 노트·RFQ 이메일을 자연어 그대로 붙여넣으면 AI가 6필드를 자동 추출하고 점수까지 매겨 Lead를 즉시 생성한다.
+            </div>
+            <div class="col-5" style="flex: 0 0 auto;">
+                <div class="swiss-card reveal" style="padding: 0.6rem 0.7rem;">
+                    <div class="num">/ 01</div>
+                    <div class="title" style="font-size: var(--body-size);">전화 메모</div>
+                    <p class="body" style="font-size: var(--small-size);">phoneLeadIntake LWC</p>
+                </div>
+                <div class="swiss-card blue reveal" style="padding: 0.6rem 0.7rem;">
+                    <div class="num">/ 02</div>
+                    <div class="title" style="font-size: var(--body-size);">방문 노트</div>
+                    <p class="body" style="font-size: var(--small-size);">visitLeadIntake LWC</p>
+                </div>
+                <div class="swiss-card navy reveal" style="padding: 0.6rem 0.7rem;">
+                    <div class="num">/ 03</div>
+                    <div class="title" style="font-size: var(--body-size);">RFQ 이메일</div>
+                    <p class="body" style="font-size: var(--small-size);">Inbound Email Service</p>
+                </div>
+                <div class="swiss-card gold reveal" style="padding: 0.6rem 0.7rem;">
+                    <div class="num">/ 04</div>
+                    <div class="title" style="font-size: var(--body-size);">6필드 자동 추출</div>
+                    <p class="body" style="font-size: var(--small-size);">회사·담당·전화·부품·수량·납기</p>
+                </div>
+                <div class="swiss-card error reveal" style="padding: 0.6rem 0.7rem;">
+                    <div class="num">/ 05</div>
+                    <div class="title" style="font-size: var(--body-size);">Lead Score 자동</div>
+                    <p class="body" style="font-size: var(--small-size);">채널·과거거래·사양·수량 4축</p>
+                </div>
+            </div>
+            <div class="tag-philosophy reveal" contenteditable="true">
+                설계 철학 태그: AE 입력 부담 최소화 — textarea 한 번 붙여넣기 → 자동 추출 + 자동 점수
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Email Service</span></div>
+        <div class="section-tag">FEATURE 05 · LEAD INTAKE — WHAT</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 21 — FEATURE 5 PAGE B
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span><span class="now">FEATURE 05</span></div>
+        <div class="deck-num">21 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 05</span>
+            <h2>Prompt Builder + 정규식 hybrid + 점수 4축</h2>
+            <span class="stage">PAGE B · LOGIC</span>
+        </div>
+        <div class="logic-grid">
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="stepnum">1</div>
+                    <div class="info"><strong contenteditable="true">자연어 → 6필드</strong><span contenteditable="true">CallMemoExtract / SpecExtract Prompt Template이 한국어 노트에서 회사·담당·전화·부품·수량·납기 추출.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">2</div>
+                    <div class="info"><strong contenteditable="true">Hybrid fallback</strong><span contenteditable="true">LLM 응답이 비거나 실패하면 한국어 정규식 추출로 자동 폴백. lastSource=ai/regex 로 출처 기록.</span></div>
+                </div>
+                <div class="step reveal">
+                    <div class="stepnum">3</div>
+                    <div class="info"><strong contenteditable="true">Score 4축 자동 산정</strong><span contenteditable="true">채널(전화·방문·이메일) 가중치 + 과거 거래 이력 + 사양 명확도 + 수량 = 0~100점. LeadTrigger가 자동 호출.</span></div>
+                </div>
+                <div class="note reveal">
+                    <strong>안전 정책</strong> — 추출 0건이면 status=extract_empty 로 분기해 "흐림/누락 확인" 안내. 임의 더미값 절대 채움 금지.
+                </div>
+            </div>
+            <div class="logic-aside">
+                <div class="code-label">Lead Score 4축</div>
+                <pre class="code reveal"><code><span class="kw">public static</span> <span class="ty">Integer</span>
+   <span class="fn">calculateScore</span>(<span class="ty">Lead</span> l) {
+   <span class="ty">Integer</span> s = 0;
+   s += <span class="fn">channelWeight</span>(l.LeadSource);
+   s += <span class="fn">tradeHistory</span>(l.Company);
+   s += <span class="fn">specClarity</span>(l.RFQ_Spec_JSON__c);
+   s += <span class="fn">quantityScore</span>(l.RFQ_Qty__c);
+   <span class="kw">return</span> <span class="ty">Math</span>.<span class="fn">min</span>(s, <span class="num">100</span>);
+}</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Email Service</span></div>
+        <div class="section-tag">FEATURE 05 · LEAD INTAKE — LOGIC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 22 — FEATURE 5 PAGE C
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">CONTEXT<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span><span class="now">FEATURE 05</span></div>
+        <div class="deck-num">22 / 31</div>
+    </div>
+    <div class="main">
+        <div class="feature-anchor reveal">
+            <span class="badge">FEATURE 05</span>
+            <h2>시연 영상 — Lead 인입 AI 추출</h2>
+            <span class="stage">PAGE C · DEMO</span>
+        </div>
+        <div class="video-placeholder reveal">
+            <div class="corner-mark tl">+</div><div class="corner-mark tr">+</div>
+            <div class="corner-mark bl">+</div><div class="corner-mark br">+</div>
+            <div class="play-icon"></div>
+            <div class="caption" contenteditable="true">"한라정공 박과장 02-555-1234, 베어링 6204 100개 납기 4/30"</div>
+            <div class="sub" contenteditable="true">
+                전화 메모 textarea에 자연어 그대로 붙여넣고 <code>[AI 추출]</code> 클릭 → 6필드(회사·담당·전화·부품·수량·납기) 자동 채움 → <strong>Lead Score 92점 자동 산정</strong> → Lead 자동 생성 + 페이지로 navigation.
+            </div>
+            <div class="meta">📎 GIF · ~25s · 추후 첨부</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Email Service</span></div>
+        <div class="section-tag">FEATURE 05 · LEAD INTAKE — DEMO</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 23 — ETC 5
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">FEATURES<span class="sep">/</span><span class="now">ETC</span><span class="sep">/</span>TROUBLE<span class="sep">/</span>REGRETS<span class="sep">/</span>QNA</div>
+        <div class="deck-num">23 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">05 · 기타 기능 한눈에</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">5개의 작지만 <span class="underline-accent">중요한 보조 기능</span></h2>
+        <div class="etc-grid">
+            <div class="etc-row reveal">
+                <div class="ico">01</div>
+                <div>
+                    <h4 contenteditable="true">Lead 인입 3채널</h4>
+                    <p contenteditable="true">전화(통화 메모 AI 자동) · 방문(방문 노트 AI 자동) · RFQ 이메일(자동 Lead 생성). <strong>AE 입력 부담 90% 감축.</strong></p>
+                </div>
+            </div>
+            <div class="etc-row reveal">
+                <div class="ico">02</div>
+                <div>
+                    <h4 contenteditable="true">단계 게이트</h4>
+                    <p contenteditable="true">발굴→견적 작성 전환 시 사업자번호+첨부+납기일 3-조건 자동 점검. 전환 메시지가 <strong>다음 액션</strong>을 안내.</p>
+                </div>
+            </div>
+            <div class="etc-row reveal">
+                <div class="ico">03</div>
+                <div>
+                    <h4 contenteditable="true">장기 미수금 알림</h4>
+                    <p contenteditable="true"><strong>60일+ 미수 주문</strong> 자동 식별, 해당 고객사 상단에 빨간 띠 자동 표시. AE 누락 전 시스템이 먼저 잡는다.</p>
+                </div>
+            </div>
+            <div class="etc-row reveal">
+                <div class="ico">04</div>
+                <div>
+                    <h4 contenteditable="true">분할 입금 추적</h4>
+                    <p contenteditable="true">한 주문에 여러 회차 입금 등록, <strong>잔액·완납 여부 자동 계산.</strong> 한국 영업의 분납 관행 그대로.</p>
+                </div>
+            </div>
+            <div class="etc-row reveal">
+                <div class="ico">05</div>
+                <div>
+                    <h4 contenteditable="true">디자인 시스템 통일</h4>
+                    <p contenteditable="true">컬러 8토큰 · SLDS 아이콘 · 점수 카드 좌측 strip 패턴 일관 적용. <strong>5종 기술 화면이 한 제품처럼 보인다.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 05 · ETC</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 24 — TROUBLE 1
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">ETC<span class="sep">/</span><span class="now">TROUBLE 01</span><span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">24 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">06 · 트러블슈팅 01 / 05</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">LLM 응답이 <span class="underline-accent">코드 펜스</span>에 갇혔다</h2>
+        <div class="trouble-grid">
+            <div class="trouble-cell problem reveal">
+                <div class="label">PROBLEM · 문제</div>
+                <p contenteditable="true">Apex 단위 테스트는 33/33 통과. 실제 호출 시 JSON 파싱 실패 — <code>Unexpected character '`' code 96</code>.</p>
+            </div>
+            <div class="trouble-cell cause reveal">
+                <div class="label">CAUSE · 원인</div>
+                <p contenteditable="true">LLM이 응답을 <code>```json ... ```</code> 마크다운 코드 펜스로 감쌌다. "마크다운 절대 금지" 지시도 무시. 단위 테스트의 mock JSON은 펜스가 없어 못 잡았다.</p>
+            </div>
+            <div class="trouble-cell fix reveal">
+                <div class="label">FIX · 해결</div>
+                <p contenteditable="true">모든 LLM 응답 wrapper에 <code>stripCodeFences</code> 헬퍼 통과 의무화. 정규식으로 백틱·json 키워드 제거 후 JSON.deserialize.</p>
+            </div>
+            <div class="trouble-cell learning reveal">
+                <div class="label">LEARNING · 학습</div>
+                <p contenteditable="true"><strong>Apex 테스트 통과가 실제 LLM 통과를 보장하지 않는다.</strong> mock 응답과 실제 응답이 다를 때를 항상 가정. 통합 시연이 진짜 테스트.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">TROUBLE 01 · stripCodeFences</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 25 — TROUBLE 2
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">ETC<span class="sep">/</span>01<span class="sep">/</span><span class="now">TROUBLE 02</span><span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">25 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">06 · 트러블슈팅 02 / 05</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">표준 주문↔영업 기회 <span class="underline-accent">연결 필드가 비활성</span></h2>
+        <div class="trouble-grid">
+            <div class="trouble-cell problem reveal">
+                <div class="label">PROBLEM · 문제</div>
+                <p contenteditable="true">수주 시 주문 자동 생성 로직이 Apex 컴파일은 통과. 런타임에 <code>Invalid field</code> 예외 발생.</p>
+            </div>
+            <div class="trouble-cell cause reveal">
+                <div class="label">CAUSE · 원인</div>
+                <p contenteditable="true">이 조직은 표준 주문 → 영업 기회 연결 필드가 활성화되어 있지 않다. Apex 컴파일러는 메타 캐시로 통과시키지만 <strong>런타임 schema는 다르다.</strong></p>
+            </div>
+            <div class="trouble-cell fix reveal">
+                <div class="label">FIX · 해결</div>
+                <p contenteditable="true">커스텀 lookup 필드(<code>Opportunity__c</code>)를 주문에 새로 만들고 트리거에서 이 필드를 채움. 표준 필드 의존을 끊고 자체 모델로 안정화.</p>
+            </div>
+            <div class="trouble-cell learning reveal">
+                <div class="label">LEARNING · 학습</div>
+                <p contenteditable="true"><strong>컴파일 통과 ≠ 런타임 통과.</strong> 표준 필드도 조직마다 활성 여부가 다르다. Schema describe로 검증 후 결정.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">TROUBLE 02 · Schema describe</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 26 — TROUBLE 3
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">ETC<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span><span class="now">TROUBLE 03</span><span class="sep">/</span>04<span class="sep">/</span>05</div>
+        <div class="deck-num">26 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">06 · 트러블슈팅 03 / 05</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">Agentforce 메타 <span class="underline-accent">직접 작성의 함정</span></h2>
+        <div class="trouble-grid">
+            <div class="trouble-cell problem reveal">
+                <div class="label">PROBLEM · 문제</div>
+                <p contenteditable="true">Agent 메타 XML 직접 조립 시 <strong>6건 연속 실패.</strong> 필수 필드 누락, enum 불일치 등.</p>
+            </div>
+            <div class="trouble-cell cause reveal">
+                <div class="label">CAUSE · 원인</div>
+                <p contenteditable="true">v66 Agentforce schema가 안정화 전. 문서 부족 — 외부 reference로 추정 작업했고 schema 마이너 버전이 자주 바뀌었다.</p>
+            </div>
+            <div class="trouble-cell fix reveal">
+                <div class="label">FIX · 해결</div>
+                <p contenteditable="true"><code>sf agent generate agent-spec</code> + <code>sf agent create --spec</code> CLI 경로로 위임. SF가 일관된 메타 생성 → retrieve로 소스에 자산화.</p>
+            </div>
+            <div class="trouble-cell learning reveal">
+                <div class="label">LEARNING · 학습</div>
+                <p contenteditable="true"><strong>불안정한 schema는 CLI 도구에 위임.</strong> trade-off는 Agent 타입이 ExternalCopilot으로 제한된다는 점 — 운영 환경에서 Employee Agent 전환 가능.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">TROUBLE 03 · sf agent CLI</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 27 — TROUBLE 4
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">ETC<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span><span class="now">TROUBLE 04</span><span class="sep">/</span>05</div>
+        <div class="deck-num">27 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">06 · 트러블슈팅 04 / 05</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">약속 납기일을 <span class="underline-accent">어디에 둘 것인가</span></h2>
+        <div class="trouble-grid">
+            <div class="trouble-cell problem reveal">
+                <div class="label">PROBLEM · 문제</div>
+                <p contenteditable="true">처음엔 ERP가 납기일을 만드는 모델로 출발. "영업 약속을 ERP가 만든다"가 <strong>도메인적으로 어색.</strong> 회귀 영역도 비대해짐.</p>
+            </div>
+            <div class="trouble-cell cause reveal">
+                <div class="label">CAUSE · 원인</div>
+                <p contenteditable="true"><strong>책임 경계 미정립.</strong> 납기일이라는 데이터를 누가 만드는지(영업 vs ERP) 합의 없이 양쪽에서 쓰기 시작했다.</p>
+            </div>
+            <div class="trouble-cell fix reveal">
+                <div class="label">FIX · 해결</div>
+                <p contenteditable="true">도메인 인사이트 — <strong>납기는 영업 약속(영업 기회의 속성)</strong>이고 ERP는 그 약속을 지킬 수 있는지 갭만 보고한다. 영업 기회 단일 필드.</p>
+            </div>
+            <div class="trouble-cell learning reveal">
+                <div class="label">LEARNING · 학습</div>
+                <p contenteditable="true"><strong>Single Source of Truth + 책임 경계 정립.</strong> 회귀 범위와 기능 범위가 동시에 줄어든다. 데이터의 "주인"이 누구인지를 1순위로 결정.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">TROUBLE 04 · Single Source of Truth</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 28 — TROUBLE 5
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">ETC<span class="sep">/</span>01<span class="sep">/</span>02<span class="sep">/</span>03<span class="sep">/</span>04<span class="sep">/</span><span class="now">TROUBLE 05</span></div>
+        <div class="deck-num">28 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">06 · 트러블슈팅 05 / 05</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">ERP 외부 통신 0 — <span class="underline-accent">게이트웨이 패턴</span></h2>
+        <div class="trouble-grid">
+            <div class="trouble-cell problem reveal">
+                <div class="label">PROBLEM · 문제</div>
+                <p contenteditable="true">ERP·생산·품질을 직접 연동하면 <strong>시연 안정성도 떨어지고</strong> 평가 시 외부 변수도 늘어난다. 네트워크 실패가 평가 흐름을 끊을 위험.</p>
+            </div>
+            <div class="trouble-cell cause reveal">
+                <div class="label">CAUSE · 원인</div>
+                <p contenteditable="true"><strong>책임 경계 미정립.</strong> 영업 시스템이 ERP 영역까지 책임질지 결정 못한 상태에서 통합 설계를 시작했다.</p>
+            </div>
+            <div class="trouble-cell fix reveal">
+                <div class="label">FIX · 해결</div>
+                <p contenteditable="true"><code>IExternalErpService</code> 인터페이스 + Mock 구현체 + Apex 내부 결정론. 실제 어댑터로 swap 가능. <strong>callout 0으로도 통합 시연 가능.</strong></p>
+            </div>
+            <div class="trouble-cell learning reveal">
+                <div class="label">LEARNING · 학습</div>
+                <p contenteditable="true"><strong>Sales Cloud는 ERP 신호의 소비자다.</strong> 게이트웨이로 책임 격리하면 시연은 안정 + 운영 swap은 인터페이스 한 군데만.</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">TROUBLE 05 · Gateway Pattern</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 29 — REGRETS
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">TROUBLE<span class="sep">/</span><span class="now">REGRETS</span><span class="sep">/</span>QNA<span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">29 / 31</div>
+    </div>
+    <div class="main">
+        <div class="slide-eyebrow reveal">07 · 아쉬웠던 점</div>
+        <h2 class="slide-title reveal" style="margin-bottom: clamp(0.7rem,1.6vw,1.2rem);">남은 4가지와 <span class="underline-accent">후속 보완 계획</span></h2>
+        <div class="regret-list">
+            <div class="regret-row reveal">
+                <div class="seq">01</div>
+                <div>
+                    <h4 contenteditable="true">Agentforce 외부 챗봇의 권한 한계</h4>
+                    <p contenteditable="true">Agent Type이 ExternalCopilot으로 강제되어 Apex Invocable을 외부에서 직접 호출하는 권한 메타가 일부 비공개. 관리자 경로로는 정상. <strong>운영 환경에서 Employee Agent 전환 시 해결 가능.</strong></p>
+                </div>
+            </div>
+            <div class="regret-row reveal">
+                <div class="seq">02</div>
+                <div>
+                    <h4 contenteditable="true">견적서 PDF 자체에 납기일 미인쇄</h4>
+                    <p contenteditable="true">약속 납기일이 영업 기회와 주문에는 흐르지만 <strong>견적서 출력물에는 아직 안 들어감.</strong> 영업 관행상 견적서 자체에 납기일 명시가 자연스러우므로 후속 보완 필요.</p>
+                </div>
+            </div>
+            <div class="regret-row reveal">
+                <div class="seq">03</div>
+                <div>
+                    <h4 contenteditable="true">이메일 추적 픽셀 미배포</h4>
+                    <p contenteditable="true">메일 오픈·링크 클릭 추적 백엔드는 완성. 외부에서 접속 가능한 <strong>Site 인프라 셋업이 미완.</strong> 코드는 그대로, Site만 활성화하면 됨.</p>
+                </div>
+            </div>
+            <div class="regret-row reveal">
+                <div class="seq">04</div>
+                <div>
+                    <h4 contenteditable="true">자유 텍스트 납기 표현의 자동 날짜 변환</h4>
+                    <p contenteditable="true">Lead 단계에서 "다음달 말까지" 같은 자유 표현은 자동 추출되지만 <strong>정확한 날짜 변환은 미구현.</strong> AE가 영업 기회 단계에서 수동 입력. 후속 Prompt 확장으로 가능.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 07 · REGRETS</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 30 — QnA
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">REGRETS<span class="sep">/</span><span class="now">QNA</span><span class="sep">/</span>CLOSING</div>
+        <div class="deck-num">30 / 31</div>
+    </div>
+    <div class="main">
+        <div class="qna-main">
+            <h1 class="reveal">Q<span class="amp">&amp;</span>A</h1>
+            <p class="msg reveal" contenteditable="true">
+                추가 문의는 이메일로 연락 부탁드립니다.<br />
+                슬라이드 자체에 narrative를 녹였으므로,<br />자유롭게 회신 주시면 후속 자료 정리해 보내드리겠습니다.<br /><br />
+                <strong style="color: var(--sf-navy);">감사합니다.</strong>
+            </p>
+            <div class="sign reveal" contenteditable="true">AE 김민수 / 한도정밀</div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 08 · QnA</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 31 — CLOSING
+     ============================================================ -->
+<section class="slide">
+    <div class="topbar">
+        <div class="brand"><span class="brand-dot"></span>HANDO PRECISION × SALESFORCE</div>
+        <div class="crumbs">REGRETS<span class="sep">/</span>QNA<span class="sep">/</span><span class="now">CLOSING</span></div>
+        <div class="deck-num">31 / 31</div>
+    </div>
+    <div class="main">
+        <div class="closing-main">
+            <div>
+                <div class="slide-eyebrow reveal">다음 단계 · NEXT STEPS</div>
+                <h1 class="reveal" contenteditable="true">영업이 결정,<br /><span class="accent">시스템이 책임.</span></h1>
+                <p class="reveal" contenteditable="true">
+                    한 번의 약속(납기일) 입력이 견적·주문·통보까지 한 흐름으로 자동 흐릅니다.
+                    다음 단계는 견적서 PDF 보완 · 이메일 픽셀 Site 활성화 · Employee Agent 전환입니다.
+                </p>
+            </div>
+            <div class="closing-next">
+                <div class="step-row reveal">
+                    <div class="n">01</div>
+                    <div><div class="k">NEXT</div><div class="v" contenteditable="true">견적서 PDF 납기일 인쇄</div></div>
+                    <div class="arrow">→</div>
+                </div>
+                <div class="step-row reveal">
+                    <div class="n">02</div>
+                    <div><div class="k">NEXT</div><div class="v" contenteditable="true">이메일 픽셀 Site 활성화</div></div>
+                    <div class="arrow">→</div>
+                </div>
+                <div class="step-row reveal">
+                    <div class="n">03</div>
+                    <div><div class="k">NEXT</div><div class="v" contenteditable="true">Employee Agent 전환</div></div>
+                    <div class="arrow">→</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottombar">
+        <div class="stack-strip"><span>Flow</span><span>Apex</span><span>LWC</span><span>Prompt Builder</span><span>Agentforce</span></div>
+        <div class="section-tag">SECTION 08 · CLOSING · 감사합니다</div>
+    </div>
+</section>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Keyboard / touch / nav-dots / progress
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.progressBar = document.querySelector('.progress-bar');
+        this.navDotsContainer = document.querySelector('.nav-dots');
+        this.setupIntersectionObserver();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupProgressBar();
+        this.setupNavDots();
+    }
+
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    this.currentSlide = Array.from(this.slides).indexOf(entry.target);
+                    this.updateNavDots();
+                }
+            });
+        }, { threshold: 0.55 });
+        this.slides.forEach(s => observer.observe(s));
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            // Skip when editing text
+            if (e.target.matches('[contenteditable="true"]')) return;
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                e.preventDefault();
+                this.goTo(this.currentSlide + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                this.goTo(this.currentSlide - 1);
+            } else if (e.key === 'Home') {
+                e.preventDefault(); this.goTo(0);
+            } else if (e.key === 'End') {
+                e.preventDefault(); this.goTo(this.slides.length - 1);
+            }
+        });
+    }
+
+    setupTouchNav() {
+        let startY = 0;
+        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const diff = startY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 60) this.goTo(this.currentSlide + (diff > 0 ? 1 : -1));
+        }, { passive: true });
+    }
+
+    setupProgressBar() {
+        document.addEventListener('scroll', () => {
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+            this.progressBar.style.width = pct + '%';
+        }, { passive: true });
+    }
+
+    setupNavDots() {
+        // IMPORTANT: clear first — avoids duplicate dots if outerHTML is captured
+        this.navDotsContainer.innerHTML = '';
+        this.slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.setAttribute('aria-label', `슬라이드 ${i + 1}`);
+            btn.addEventListener('click', () => this.goTo(i));
+            this.navDotsContainer.appendChild(btn);
+        });
+        this.updateNavDots();
+    }
+
+    updateNavDots() {
+        this.navDotsContainer.querySelectorAll('button').forEach((btn, i) => {
+            btn.classList.toggle('active', i === this.currentSlide);
+        });
+    }
+
+    goTo(idx) {
+        const clamped = Math.max(0, Math.min(this.slides.length - 1, idx));
+        this.slides[clamped].scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+/* ===========================================
+   INLINE EDITOR
+   - JS-based hover (not CSS sibling) per skill rules
+   - localStorage auto-save
+   - Ctrl+S export — strips edit state from outerHTML
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.STORAGE_KEY = 'sf-deck-edits-2026-05-12';
+        this.toggleBtn = document.getElementById('editToggle');
+        this.banner = document.getElementById('editBanner');
+        this.hotzone = document.querySelector('.edit-hotzone');
+        this.editableEls = document.querySelectorAll('[contenteditable="true"]');
+        this.hideTimeout = null;
+
+        this.restoreFromStorage();
+        this.wireEvents();
+    }
+
+    wireEvents() {
+        // Toggle button click
+        this.toggleBtn.addEventListener('click', () => this.toggleEditMode());
+
+        // Hotzone hover with 400ms grace period
+        this.hotzone.addEventListener('mouseenter', () => {
+            clearTimeout(this.hideTimeout);
+            this.toggleBtn.classList.add('show');
+        });
+        this.hotzone.addEventListener('mouseleave', () => {
+            this.hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggleBtn.classList.remove('show');
+            }, 400);
+        });
+        this.toggleBtn.addEventListener('mouseenter', () => clearTimeout(this.hideTimeout));
+        this.toggleBtn.addEventListener('mouseleave', () => {
+            this.hideTimeout = setTimeout(() => {
+                if (!this.isActive) this.toggleBtn.classList.remove('show');
+            }, 400);
+        });
+
+        // Hotzone direct click
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+
+        // Keyboard E + Ctrl+S
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.matches('[contenteditable="true"]')) {
+                e.preventDefault();
+                this.toggleEditMode();
+            } else if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                this.exportFile();
+            }
+        });
+
+        // Persist on input
+        this.editableEls.forEach(el => {
+            el.addEventListener('input', () => this.saveToStorage());
+        });
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle('edit-active', this.isActive);
+        this.toggleBtn.classList.toggle('active', this.isActive);
+        this.banner.classList.toggle('active', this.isActive);
+        if (this.isActive) this.toggleBtn.classList.add('show');
+    }
+
+    saveToStorage() {
+        const state = {};
+        this.editableEls.forEach((el, i) => { state[i] = el.innerHTML; });
+        try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+    }
+
+    restoreFromStorage() {
+        try {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (!raw) return;
+            const state = JSON.parse(raw);
+            this.editableEls.forEach((el, i) => {
+                if (state[i] !== undefined) el.innerHTML = state[i];
+            });
+        } catch (_) {}
+    }
+
+    exportFile() {
+        // CRITICAL: strip edit state before capturing outerHTML
+        // Otherwise saved file opens stuck in edit mode
+        const editableEls = Array.from(document.querySelectorAll('[contenteditable]'));
+        editableEls.forEach(el => el.removeAttribute('contenteditable'));
+        document.body.classList.remove('edit-active');
+        this.toggleBtn.classList.remove('active', 'show');
+        this.banner.classList.remove('active');
+
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+        // Restore so user can keep editing
+        document.body.classList.add('edit-active');
+        editableEls.forEach(el => el.setAttribute('contenteditable', 'true'));
+        this.toggleBtn.classList.add('active', 'show');
+        this.banner.classList.add('active');
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'presentation-deck.html';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+}
+
+new SlidePresentation();
+const editor = new InlineEditor();
+</script>
+
+<!-- ============================================================
+     TONE PREVIEW v1 — Claude Design chrome + slide 8~23 콘텐츠
+     기존 슬라이드 31장은 무수정. 톤 확인용 임시 부착.
+     모든 CSS는 #tone-preview-v1 로 스코프됨.
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style id="tone-preview-css">
+#tone-preview-v1 {
+  --bg: #FFFFFF;
+  --bg-soft: #F4F6FB;
+  --bg-tint: #EAF1FF;
+  --bg-deep: #0B1626;
+  --ink: #0B1626;
+  --ink-2: #2E3A4E;
+  --muted: #6B7689;
+  --muted-2: #98A1B2;
+  --rule: rgba(11, 22, 38, 0.08);
+  --rule-2: rgba(11, 22, 38, 0.14);
+  --accent: #1B5EFF;
+  --accent-dark: #0E3FB8;
+  --accent-soft: #E0EAFF;
+  --accent-tint: #F0F4FF;
+  --success: #1AA56E;
+  --success-soft: #E1F5EC;
+  --warn: #E08434;
+  --warn-soft: #FDF1E3;
+  --danger: #DC4B4B;
+  --danger-soft: #FCE7E7;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --font-kr: 'Pretendard', 'Pretendard Variable', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+  background: #1A1F2E;
+  padding: 64px 0;
+  display: flex; flex-direction: column; align-items: center; gap: 48px;
+}
+#tone-preview-v1 .preview-label {
+  color: #DCE3F0; font-family: var(--font-mono); font-size: 14px;
+  letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+  padding: 12px 24px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+}
+#tone-preview-v1 .preview-label b { color: #6FA0FF; font-weight: 600; }
+
+#tone-preview-v1 .s {
+  width: 1920px; min-height: 1080px;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-kr);
+  padding: 64px 80px; box-sizing: border-box;
+  position: relative; overflow: hidden;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  transform: scale(0.5); transform-origin: top center;
+  margin-bottom: -540px; /* compensate for transform */
+  box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+}
+#tone-preview-v1 .s-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 20px;
+}
+#tone-preview-v1 .s-head .crumb {
+  display: flex; gap: 16px; align-items: center;
+  font-family: var(--font-mono); font-size: 14px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+#tone-preview-v1 .s-head .crumb .dot { color: var(--rule-2); }
+#tone-preview-v1 .s-head .crumb b { color: var(--ink); font-weight: 500; }
+#tone-preview-v1 .s-head .brand {
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+#tone-preview-v1 .s-head .brand .mark {
+  display:inline-block; width: 8px; height: 8px; background: var(--accent);
+  border-radius: 2px; vertical-align: middle; margin-right: 8px; transform: rotate(45deg);
+}
+#tone-preview-v1 .s-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 20px; border-top: 1px solid var(--rule);
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+#tone-preview-v1 .s-foot .page b { color: var(--ink); font-weight: 500; }
+
+/* Feature Page A */
+#tone-preview-v1 .fa-body { padding-top: 16px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; min-height: 0; }
+#tone-preview-v1 .fa-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#tone-preview-v1 .fa-meta .ix { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; padding: 5px 10px; background: var(--bg-soft); border-radius: 6px; }
+#tone-preview-v1 .fa-meta .ix b { color: var(--accent); font-weight: 600; }
+#tone-preview-v1 .fa-meta .stage { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; padding-left: 10px; border-left: 2px solid var(--rule-2); margin-left: 4px; }
+#tone-preview-v1 .fa-title { font-size: 56px; line-height: 1.06; font-weight: 700; letter-spacing: -0.028em; margin: 10px 0 0; max-width: 1500px; color: var(--ink); }
+#tone-preview-v1 .fa-title .accent { color: var(--accent); font-weight: 500; }
+#tone-preview-v1 .fa-lede {
+  background: var(--bg-soft); border-left: 4px solid var(--accent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 22px 28px;
+  font-size: 22px; line-height: 1.5; font-weight: 500; color: var(--ink);
+}
+#tone-preview-v1 .fa-lede b, #tone-preview-v1 .fa-lede strong { font-weight: 700; color: var(--accent-dark); }
+#tone-preview-v1 .fa-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; min-height: 0; }
+#tone-preview-v1 .fa-cards.five-col { grid-template-columns: repeat(5, 1fr); }
+#tone-preview-v1 .fa-card {
+  background: var(--bg); border: 1px solid var(--rule); border-radius: var(--r-md);
+  padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; min-width: 0;
+}
+#tone-preview-v1 .fa-card.navy { background: var(--bg-deep); border-color: transparent; color: rgba(255,255,255,0.9); }
+#tone-preview-v1 .fa-card.navy .num { color: #6FA0FF; }
+#tone-preview-v1 .fa-card.navy h4 { color: #fff; }
+#tone-preview-v1 .fa-card.navy p { color: rgba(255,255,255,0.78); }
+#tone-preview-v1 .fa-card.navy ul li { color: rgba(255,255,255,0.82); }
+#tone-preview-v1 .fa-card.navy ul li strong { color: #fff; }
+#tone-preview-v1 .fa-card.navy ul li::before { background: #6FA0FF; }
+#tone-preview-v1 .fa-card.gold { background: #FAF7EC; border-color: #E8D89A; }
+#tone-preview-v1 .fa-card.gold .num { color: #8C6B1F; }
+#tone-preview-v1 .fa-card.blue { background: var(--accent-tint); border-color: transparent; }
+#tone-preview-v1 .fa-card.error { background: var(--danger-soft); border-color: transparent; }
+#tone-preview-v1 .fa-card .num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 0.06em; }
+#tone-preview-v1 .fa-card h4 { font-size: 22px; line-height: 1.22; font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--ink); }
+#tone-preview-v1 .fa-card p { font-size: 16px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+#tone-preview-v1 .fa-card p b, #tone-preview-v1 .fa-card p strong { font-weight: 600; color: var(--ink); }
+#tone-preview-v1 .fa-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+#tone-preview-v1 .fa-card ul li { font-size: 15px; line-height: 1.5; color: var(--ink-2); padding-left: 16px; position: relative; }
+#tone-preview-v1 .fa-card ul li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 2px; background: var(--accent); }
+#tone-preview-v1 .fa-card ul li strong, #tone-preview-v1 .fa-card ul li b { font-weight: 600; color: var(--ink); }
+#tone-preview-v1 .fa-card.mini { padding: 14px 16px; gap: 6px; }
+#tone-preview-v1 .fa-card.mini .num { font-size: 11px; }
+#tone-preview-v1 .fa-card.mini h4 { font-size: 16px; }
+#tone-preview-v1 .fa-card.mini p { font-size: 13px; line-height: 1.45; }
+
+#tone-preview-v1 .philosophy-tag-large {
+  display: flex; align-items: stretch; gap: 0;
+  background: var(--bg-deep); color: #fff; border-radius: var(--r-md);
+  overflow: hidden; box-shadow: 0 4px 16px rgba(11,22,38,0.12);
+}
+#tone-preview-v1 .philosophy-tag-large .pt-num {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  background: var(--accent); padding: 24px 32px; min-width: 140px;
+  font-family: var(--font-mono); color: #fff; gap: 2px;
+}
+#tone-preview-v1 .philosophy-tag-large .pt-num .nl { font-size: 12px; letter-spacing: 0.12em; opacity: 0.7; text-transform: uppercase; }
+#tone-preview-v1 .philosophy-tag-large .pt-num .nv { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
+#tone-preview-v1 .philosophy-tag-large .pt-body { flex: 1; padding: 20px 28px; display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+#tone-preview-v1 .philosophy-tag-large .pt-body .pt-lbl { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+#tone-preview-v1 .philosophy-tag-large .pt-body .pt-ttl { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; color: #fff; }
+#tone-preview-v1 .philosophy-tag-large .pt-body .pt-desc { font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.78); }
+
+/* Feature Page B */
+#tone-preview-v1 .fp-body { padding-top: 24px; display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: stretch; }
+#tone-preview-v1 .fp-left { display: flex; flex-direction: column; gap: 22px; min-height: 0; }
+#tone-preview-v1 .fp-left h2 { font-size: 48px; line-height: 1.08; font-weight: 700; letter-spacing: -0.025em; margin: 0; color: var(--ink); }
+#tone-preview-v1 .fp-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#tone-preview-v1 .fp-meta .ix { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; padding: 5px 10px; background: var(--bg-soft); border-radius: 6px; }
+#tone-preview-v1 .fp-meta .ix b { color: var(--accent); font-weight: 600; }
+#tone-preview-v1 .fp-meta .stage { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+#tone-preview-v1 .fp-meta .stage::before { content: "·"; margin-right: 8px; }
+#tone-preview-v1 .step-flow { display: flex; flex-direction: column; gap: 10px; }
+#tone-preview-v1 .step-row {
+  display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+  background: var(--bg); border: 1px solid var(--rule); border-radius: var(--r-sm);
+  padding: 14px 18px;
+}
+#tone-preview-v1 .step-row .n {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--accent);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+}
+#tone-preview-v1 .step-row .b { display: flex; flex-direction: column; gap: 4px; }
+#tone-preview-v1 .step-row .b .t { font-size: 16px; font-weight: 600; color: var(--ink); }
+#tone-preview-v1 .step-row .b .d { font-size: 14px; color: var(--muted); line-height: 1.5; }
+#tone-preview-v1 .step-row .b .d .api { font-family: var(--font-mono); font-size: 12px; background: var(--bg-soft); padding: 2px 6px; border-radius: 4px; color: var(--accent-dark); }
+#tone-preview-v1 .note-callout {
+  background: var(--accent-tint); border-left: 3px solid var(--accent);
+  padding: 14px 18px; border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: 14px; line-height: 1.55; color: var(--ink-2);
+}
+#tone-preview-v1 .note-callout.danger { background: var(--danger-soft); border-left-color: var(--danger); }
+#tone-preview-v1 .note-callout.danger b { color: var(--danger); }
+#tone-preview-v1 .note-callout b { font-weight: 600; color: var(--ink); }
+#tone-preview-v1 .fp-right { display: flex; flex-direction: column; gap: 18px; }
+#tone-preview-v1 .code-block {
+  background: var(--bg-deep); border-radius: var(--r-md);
+  overflow: hidden; box-shadow: 0 4px 16px rgba(11,22,38,0.08);
+}
+#tone-preview-v1 .code-block > header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+}
+#tone-preview-v1 .code-block > header .lang { font-family: var(--font-mono); font-size: 12px; color: #6FA0FF; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+#tone-preview-v1 .code-block > header .ref { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.04em; }
+#tone-preview-v1 .code-block ol.code-lines {
+  list-style: none; counter-reset: line;
+  margin: 0; padding: 18px 0; background: var(--bg-deep);
+  font-family: var(--font-mono); font-size: 14px; line-height: 1.7; color: #E6EAF2;
+}
+#tone-preview-v1 .code-block ol.code-lines li {
+  display: block; padding: 2px 24px 2px 64px; position: relative;
+  white-space: pre-wrap; word-break: break-word;
+}
+#tone-preview-v1 .code-block ol.code-lines li::before {
+  counter-increment: line; content: counter(line);
+  position: absolute; left: 0; width: 40px; text-align: right;
+  color: rgba(255,255,255,0.25); font-size: 12px; padding-right: 12px;
+  border-right: 1px solid rgba(255,255,255,0.06); user-select: none;
+}
+#tone-preview-v1 .code-block .kw  { color: #C792EA; }
+#tone-preview-v1 .code-block .str { color: #C3E88D; }
+#tone-preview-v1 .code-block .com { color: rgba(255,255,255,0.4); font-style: italic; }
+#tone-preview-v1 .code-block .typ { color: #82AAFF; }
+#tone-preview-v1 .code-block .fn  { color: #82AAFF; }
+#tone-preview-v1 .code-block .ann { color: #FFCB6B; }
+#tone-preview-v1 .code-block .punc { color: rgba(255,255,255,0.7); }
+
+/* Feature Page C — Demo */
+#tone-preview-v1 .fc-body { padding-top: 16px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 18px; min-height: 0; }
+#tone-preview-v1 .fc-frame {
+  background: linear-gradient(180deg, #0B1626 0%, #0E1A30 100%);
+  border-radius: var(--r-md); position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 60px; min-height: 0;
+  box-shadow: 0 8px 32px rgba(11,22,38,0.18);
+}
+#tone-preview-v1 .fc-frame::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.018) 0, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 14px);
+}
+#tone-preview-v1 .fc-frame .corner-mark { position: absolute; color: rgba(255,255,255,0.32); font-family: var(--font-mono); font-size: 22px; font-weight: 300; line-height: 1; }
+#tone-preview-v1 .fc-frame .corner-mark.tl { top: 22px; left: 26px; }
+#tone-preview-v1 .fc-frame .corner-mark.tr { top: 22px; right: 26px; }
+#tone-preview-v1 .fc-frame .corner-mark.bl { bottom: 22px; left: 26px; }
+#tone-preview-v1 .fc-frame .corner-mark.br { bottom: 22px; right: 26px; }
+#tone-preview-v1 .fc-frame .meta-corner {
+  position: absolute; top: 22px; left: 60px;
+  font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+}
+#tone-preview-v1 .fc-frame .duration-corner {
+  position: absolute; bottom: 22px; right: 60px;
+  font-family: var(--font-mono); font-size: 12px; padding: 4px 10px;
+  background: rgba(255,255,255,0.1); color: #fff; border-radius: 4px;
+}
+#tone-preview-v1 .fc-frame .play-icon {
+  width: 88px; height: 88px; border-radius: 50%; background: rgba(255,255,255,0.95);
+  display: flex; align-items: center; justify-content: center; color: var(--accent);
+  position: relative; z-index: 2; margin-bottom: 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+#tone-preview-v1 .fc-frame .caption {
+  font-size: 36px; font-weight: 700; color: #fff; letter-spacing: -0.025em;
+  text-align: center; max-width: 1100px; position: relative; z-index: 2; margin-bottom: 18px;
+  line-height: 1.25;
+}
+#tone-preview-v1 .fc-frame .sub {
+  font-size: 18px; line-height: 1.65; color: rgba(255,255,255,0.72);
+  text-align: center; max-width: 1000px; position: relative; z-index: 2;
+}
+#tone-preview-v1 .fc-frame .sub b, #tone-preview-v1 .fc-frame .sub strong { color: #fff; font-weight: 600; }
+#tone-preview-v1 .fc-frame .sub code { font-family: var(--font-mono); font-size: 15px; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; color: #82AAFF; }
+#tone-preview-v1 .fc-action-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+#tone-preview-v1 .fc-action-row .meta-info { font-family: var(--font-mono); font-size: 13px; color: var(--muted); line-height: 1.5; }
+#tone-preview-v1 .fc-action-row .meta-info b { color: var(--ink); font-weight: 600; }
+#tone-preview-v1 .gdrive-btn {
+  display: inline-flex; align-items: center; gap: 14px;
+  background: #fff; border: 1.5px solid var(--accent); border-radius: var(--r-sm);
+  padding: 14px 20px; color: var(--accent); text-decoration: none;
+  font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(27,94,255,0.12);
+}
+#tone-preview-v1 .gdrive-btn .ic { width: 22px; height: 22px; flex-shrink: 0; }
+#tone-preview-v1 .gdrive-btn .txt { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+#tone-preview-v1 .gdrive-btn .txt .main { font-size: 16px; font-weight: 600; }
+#tone-preview-v1 .gdrive-btn .txt .sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+#tone-preview-v1 .gdrive-btn .arrow { margin-left: 8px; opacity: 0.5; }
+
+/* Misc slide (23) */
+#tone-preview-v1 .misc-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 32px; padding-bottom: 28px; }
+#tone-preview-v1 .misc-head .eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+#tone-preview-v1 .misc-head h2 { font-size: 56px; line-height: 1.08; font-weight: 700; letter-spacing: -0.025em; margin: 0; color: var(--ink); }
+#tone-preview-v1 .misc-head h2 .accent { color: var(--accent); }
+#tone-preview-v1 .misc-head .meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); letter-spacing: 0.04em; }
+#tone-preview-v1 .misc-body { display: grid; grid-template-rows: auto 1fr; }
+#tone-preview-v1 .misc-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+#tone-preview-v1 .misc-card {
+  background: var(--bg); border: 1px solid var(--rule); border-radius: var(--r-lg);
+  padding: 24px; display: flex; flex-direction: column; gap: 10px;
+}
+#tone-preview-v1 .misc-card.featured { background: var(--bg-deep); color: #DCE3F0; border-color: transparent; }
+#tone-preview-v1 .misc-card.featured h3 { color: #fff; }
+#tone-preview-v1 .misc-card.featured p { color: rgba(255,255,255,0.78); }
+#tone-preview-v1 .misc-card.featured .num { color: #6FA0FF; }
+#tone-preview-v1 .misc-card .num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 0.08em; }
+#tone-preview-v1 .misc-card h3 { font-size: 22px; line-height: 1.22; font-weight: 700; letter-spacing: -0.018em; margin: 0; color: var(--ink); }
+#tone-preview-v1 .misc-card p { font-size: 15px; line-height: 1.55; color: var(--ink-2); margin: 0; }
+#tone-preview-v1 .misc-card p b { font-weight: 600; color: var(--ink); }
+</style>
+
+<div id="tone-preview-v1">
+  <div class="preview-label">▼ TONE PREVIEW v1 — <b>Claude Design 디자인 + 우리 slide 8~23 콘텐츠</b> · 1:0.5 스케일로 축소 표시</div>
+
+  <!-- ═════ SLIDE 8 — F1 PAGE A ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 1 · Page A — 정의</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fa-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>01 / 05</b></span><span class="stage">Page A · 무엇 / 왜</span></div>
+        <h2 class="fa-title">영업 콕피트 + 자연어 입력바 <span class="accent">(AI 라우터)</span></h2>
+      </div>
+      <div class="fa-lede">AE 김민수가 <b>오늘 무엇을 해야 하는지 한눈에 보고</b>, 한 줄 자연어로 묻고 한국어 답을 받는 통합 홈 화면.</div>
+      <div class="fa-cards">
+        <article class="fa-card">
+          <span class="num">/ 왜 도입했나</span>
+          <p>영업의 일과가 메일·엑셀·메신저·ERP <strong>4곳에 흩어져 있어</strong> "지금 뭐가 급한지" 파악에 시간이 든다. 한눈 5카드로 우선순위를 자동 정렬하고, <strong>자연어 입력바 한 개로 모든 데이터 질의를 통합</strong>.</p>
+        </article>
+        <article class="fa-card navy">
+          <span class="num">/ 5장 한눈 카드</span>
+          <ul>
+            <li><strong>우선 처리 Lead</strong> — RFQ 미확인 / 게이트 미통과</li>
+            <li><strong>위험 주문</strong> — ERP 갭으로 약속 납기 위협</li>
+            <li><strong>견적 추적</strong> — 발송 후 응답 대기 + 의도 분류</li>
+            <li><strong>미수금 액션</strong> — 60일+ 장기 미수금 자동 식별</li>
+            <li><strong>영업 파이프라인</strong> — 단계별 금액 합산</li>
+          </ul>
+        </article>
+      </div>
+      <div class="philosophy-tag-large">
+        <div class="pt-num"><span class="nl">PRINCIPLE</span><span class="nv">02</span></div>
+        <div class="pt-body"><span class="pt-lbl">설계 철학 태그</span><span class="pt-ttl">AE 의사결정 중심</span><span class="pt-desc">입력은 자연어 한 줄, 데이터 인용은 시스템이 책임.</span></div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 1 / Page A</span><span class="page">08 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 9 — F1 PAGE B ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 1 · Page B — 핵심 로직</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fp-body">
+      <div class="fp-left">
+        <div class="fp-meta"><span class="ix">FEATURE <b>01 / 05</b></span><span class="stage">Page B · 핵심 로직</span></div>
+        <h2>자연어 → 3-step AI 라우터.<br>Apex → 한국어 응답.</h2>
+        <div class="step-flow">
+          <div class="step-row"><span class="n">1</span><div class="b"><span class="t">도구 선택</span><span class="d">질문 의도를 분석해 6종 Action 중 하나 결정. <span class="api">Prompt: AgentRouter</span></span></div></div>
+          <div class="step-row"><span class="n">2</span><div class="b"><span class="t">Apex Action 호출</span><span class="d">@AuraEnabled 메서드 자동 실행 · SOQL·집계·필터링 → 구조화된 결과 반환. <span class="api">Apex Invocable</span></span></div></div>
+          <div class="step-row"><span class="n">3</span><div class="b"><span class="t">한국어 응답 합성</span><span class="d">raw 결과 + 원 질문을 LLM에 전달 → 한국어 자연체 응답. <span class="api">Prompt: AgentSynthesize</span></span></div></div>
+        </div>
+        <div class="note-callout"><b>진입점 2개, 처리는 1곳</b> — LWC 입력바의 ReAct LLM 라우터 · Agentforce 외부 챗봇 — 모두 동일 6개 Apex Invocable 호출. 코드 중복 0.</div>
+      </div>
+      <div class="fp-right">
+        <div class="code-block">
+          <header><span class="lang">Apex · AgentforceInputBarService.cls</span><span class="ref">L29 — L31 · ReAct 진입</span></header>
+          <ol class="code-lines">
+            <li><span class="com">// AgentforceInputBarService.ask()</span></li>
+            <li><span class="typ">String</span> tool = LlmRouter.<span class="fn">choose</span>(question);  <span class="com">// 1) 도구</span></li>
+            <li><span class="typ">Map</span>&lt;<span class="typ">String</span>,<span class="typ">Object</span>&gt; data = <span class="fn">invokeAction</span>(tool, q); <span class="com">// 2) Apex</span></li>
+            <li><span class="kw">return</span> LlmRouter.<span class="fn">synthesize</span>(question, data); <span class="com">// 3) 한국어</span></li>
+          </ol>
+        </div>
+        <div class="note-callout danger"><b>안전 정책</b> — LLM은 데이터를 만들지 않는다. SOQL 결과만 인용. 환각 방지 + 출처 명확.</div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 1 / Page B</span><span class="page">09 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 10 — F1 PAGE C ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 1 · Page C — 시연 영상</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fc-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>01 / 05</b></span><span class="stage">Page C · 시연 영상</span></div>
+        <h2 class="fa-title">시연 영상 — 자연어 라우터</h2>
+      </div>
+      <div></div>
+      <div class="fc-frame">
+        <span class="meta-corner">DEMO · F1</span><span class="duration-corner">0:25 · GIF</span>
+        <span class="corner-mark tl">+</span><span class="corner-mark tr">+</span><span class="corner-mark bl">+</span><span class="corner-mark br">+</span>
+        <div class="play-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="caption">"대성기공(주) 물건 나갔나요?"</div>
+        <p class="sub">자연어 질의 → AgentRouter가 <code>GetAccountSummary</code> 도구 선택 → 고객사 요약·미출고·미수금 동시 조회 → 한국어 자연체 응답. <b>"미출고 주문 3건, 장기 미수금 보유"</b> 카드 표시.</p>
+      </div>
+      <div class="fc-action-row">
+        <span class="meta-info"><b>📎 GIF · 15~30s</b> · 추후 첨부 — PDF에서 아래 버튼 클릭 시 Google Drive로 이동</span>
+        <a class="gdrive-btn" href="#" target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="txt"><span class="main">시연 영상 보기</span><span class="sub">Google Drive · MP4</span></span><span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 1 / Page C</span><span class="page">10 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 11 — F2 PAGE A ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 2 · Page A — 정의</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fa-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>02 / 05</b></span><span class="stage">Page A · 무엇 / 왜</span></div>
+        <h2 class="fa-title">사업자등록증 OCR <span class="accent">(Prompt Builder 멀티모달)</span></h2>
+      </div>
+      <div class="fa-lede">영업 기회 단계에서 사업자등록증 PDF/이미지를 업로드하면 <b>사업자번호·대표자·법인명·주소 4필드가 Account에 자동 보강</b>된다.</div>
+      <div class="fa-cards">
+        <article class="fa-card">
+          <span class="num">/ 왜 도입했나</span>
+          <p>한국 B2B 거래는 <strong>사업자번호 확보가 필수</strong>지만 Lead 단계에서 요구하면 단순 견적 문의자가 빠진다. 의사가 확인된 영업 기회 단계로 옮겨두고, <strong>입력은 사진 한 장 업로드로 자동</strong>.</p>
+        </article>
+        <article class="fa-card gold">
+          <span class="num">/ 자동 보강 4필드</span>
+          <ul>
+            <li><strong>사업자등록번호</strong> — XXX-XX-XXXXX</li>
+            <li><strong>대표자명</strong> — 한글 풀네임</li>
+            <li><strong>법인명 / 상호</strong> — Account.Name</li>
+            <li><strong>사업장 주소</strong> — BillingAddress</li>
+          </ul>
+        </article>
+      </div>
+      <div class="philosophy-tag-large">
+        <div class="pt-num"><span class="nl">PRINCIPLE</span><span class="nv">01+02</span></div>
+        <div class="pt-body"><span class="pt-lbl">설계 철학 태그</span><span class="pt-ttl">한국식 정서 + AE 의사결정 중심</span><span class="pt-desc">사업자번호 자동 추출, AE는 검토만.</span></div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 2 / Page A</span><span class="page">11 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 12 — F2 PAGE B ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 2 · Page B — 핵심 로직</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fp-body">
+      <div class="fp-left">
+        <div class="fp-meta"><span class="ix">FEATURE <b>02 / 05</b></span><span class="stage">Page B · 핵심 로직</span></div>
+        <h2>Prompt Builder 멀티모달 호출.<br>ContentDocument → 4필드 JSON.</h2>
+        <div class="step-flow">
+          <div class="step-row"><span class="n">1</span><div class="b"><span class="t">첨부 파일 핸들 캡처</span><span class="d">ContentDocument ID를 LWC에서 Apex로 전달. ContentVersion 직접 노출 X.</span></div></div>
+          <div class="step-row"><span class="n">2</span><div class="b"><span class="t">WrappedValue로 inputParams 구성</span><span class="d"><span class="api">Input:ContentDocument</span> 키로 Prompt Template에 멀티모달 입력 주입.</span></div></div>
+          <div class="step-row"><span class="n">3</span><div class="b"><span class="t">ConnectApi 3-arg + 응답 정제</span><span class="d">코드 펜스 stripCodeFences 통과 → JSON 파싱 → Account 업데이트.</span></div></div>
+        </div>
+        <div class="note-callout"><b>5체크리스트</b> — inputParams / 3-arg / applicationName / isPreview / 에러 처리. 모두 충족해야 멀티모달 통과.</div>
+      </div>
+      <div class="fp-right">
+        <div class="code-block">
+          <header><span class="lang">Apex · BusinessLicensePromptInvoker.cls</span><span class="ref">멀티모달 호출 발췌</span></header>
+          <ol class="code-lines">
+            <li><span class="typ">ConnectApi.WrappedValue</span> wv = <span class="kw">new</span> <span class="typ">ConnectApi.WrappedValue</span>();</li>
+            <li>wv.value = <span class="kw">new</span> <span class="typ">Map</span>&lt;<span class="typ">String</span>,<span class="typ">Object</span>&gt;{<span class="str">'Id'</span> =&gt; contentDocId};</li>
+            <li>input.inputParams = <span class="kw">new</span> <span class="typ">Map</span>&lt;<span class="typ">String</span>,<span class="typ">ConnectApi.WrappedValue</span>&gt;{</li>
+            <li>   <span class="str">'Input:ContentDocument'</span> =&gt; wv };</li>
+            <li><span class="typ">ConnectApi.EinsteinLLM</span>.<span class="fn">generateMessagesForPromptTemplate</span>(</li>
+            <li>   <span class="str">'BusinessLicenseExtract'</span>, <span class="str">''</span>, input);</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 2 / Page B</span><span class="page">12 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 13 — F2 PAGE C ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 2 · Page C — 시연 영상</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fc-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>02 / 05</b></span><span class="stage">Page C · 시연 영상</span></div>
+        <h2 class="fa-title">시연 영상 — 사업자등록증 자동 추출</h2>
+      </div>
+      <div></div>
+      <div class="fc-frame">
+        <span class="meta-corner">DEMO · F2</span><span class="duration-corner">0:20 · GIF</span>
+        <span class="corner-mark tl">+</span><span class="corner-mark tr">+</span><span class="corner-mark bl">+</span><span class="corner-mark br">+</span>
+        <div class="play-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="caption">대광건설기계 사업자등록증 업로드</div>
+        <p class="sub"><code>docs/samples/business-license/1.jpg</code> 업로드 → Prompt Builder 멀티모달 호출 → 4필드 JSON 추출 → <b>사업자번호 471-81-00778</b> 외 3필드 Account에 자동 보강.</p>
+      </div>
+      <div class="fc-action-row">
+        <span class="meta-info"><b>📎 GIF · ~20s</b> · 추후 첨부</span>
+        <a class="gdrive-btn" href="#" target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="txt"><span class="main">시연 영상 보기</span><span class="sub">Google Drive · MP4</span></span><span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 2 / Page C</span><span class="page">13 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 14 — F3 PAGE A ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 3 · Page A — 정의</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fa-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>03 / 05</b></span><span class="stage">Page A · 무엇 / 왜</span></div>
+        <h2 class="fa-title">AI 견적 작성 + 의도 분류 + <span class="accent">자동 재견적</span></h2>
+      </div>
+      <div class="fa-lede">견적 라인 인라인 편집 · 한국식 PDF 발송 · 고객 응답 의도를 AI가 분류해 <b>재견적이면 새 견적 초안을 자동으로 만들어둔다</b>.</div>
+      <div class="fa-cards">
+        <article class="fa-card">
+          <span class="num">/ 왜 도입했나</span>
+          <p>한국 영업의 견적은 <strong>₩ 단위</strong>가 우선이고 일금 한글 표기도 함께 들어간다. 재견적 응답이 오면 AE가 처음부터 다시 작성해야 했음 → AI가 의도 인지 + <strong>가격은 그대로 복제</strong> + 협상 메모만 자동.</p>
+        </article>
+        <article class="fa-card gold">
+          <span class="num">/ 한국식 견적 4요소</span>
+          <ul>
+            <li><strong>₩ 표기</strong> + 일금 한글 자동 변환</li>
+            <li><strong>할인 금액 입력</strong> → % 자동 계산</li>
+            <li><strong>한국식 PDF</strong> — 상단 상호·하단 도장 자리</li>
+            <li><strong>의도 배지</strong> — 수락 / 재견적 / 기타</li>
+          </ul>
+        </article>
+      </div>
+      <div class="philosophy-tag-large">
+        <div class="pt-num"><span class="nl">PRINCIPLE</span><span class="nv">01+02</span></div>
+        <div class="pt-body"><span class="pt-lbl">설계 철학 태그</span><span class="pt-ttl">한국식 정서 + AE 의사결정 중심</span><span class="pt-desc">AI 분석만, 가격 결정은 AE가.</span></div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 3 / Page A</span><span class="page">14 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 15 — F3 PAGE B ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 3 · Page B — 핵심 로직</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fp-body">
+      <div class="fp-left">
+        <div class="fp-meta"><span class="ix">FEATURE <b>03 / 05</b></span><span class="stage">Page B · 핵심 로직</span></div>
+        <h2>이메일 트리거 → 의도 분류 → 자동 초안.</h2>
+        <div class="step-flow">
+          <div class="step-row"><span class="n">1</span><div class="b"><span class="t">EmailMessage after insert</span><span class="d">고객 응답 메일 수신 → Apex Trigger가 비동기 분류 시작.</span></div></div>
+          <div class="step-row"><span class="n">2</span><div class="b"><span class="t">Prompt Template으로 의도 분류</span><span class="d">본문을 LLM에 전달 → Intent__c = <span class="api">'재견적' / '수락' / '기타'</span>.</span></div></div>
+          <div class="step-row"><span class="n">3</span><div class="b"><span class="t">재견적이면 자동 초안</span><span class="d">원본 견적 라인 복제 + Description에 AI 협상 분석 + (재견적) 접미사.</span></div></div>
+        </div>
+        <div class="note-callout danger"><b>가격 안전 정책</b> — AI는 Description에 자연어 분석만 적는다. 단가·수량·할인은 원본 라인을 그대로 복제. <b>AE가 수동 확정.</b></div>
+      </div>
+      <div class="fp-right">
+        <div class="code-block">
+          <header><span class="lang">Apex · EmailMessageTriggerHandler.cls</span><span class="ref">비동기 분류 + 자동 초안</span></header>
+          <ol class="code-lines">
+            <li><span class="com">// EmailMessage after insert</span></li>
+            <li><span class="typ">EmailIntentClassifyService</span>.<span class="fn">classifyAsync</span>(em.Id);</li>
+            <li><span class="com">// → Prompt Template으로 분류 (비동기)</span></li>
+            <li></li>
+            <li><span class="com">// 결과: Intent__c = '재견적'</span></li>
+            <li><span class="typ">QuoteRequoteService</span>.<span class="fn">autoDraftIfRequote</span>(em.Id);</li>
+            <li><span class="com">// → 새 견적 초안 자동 생성</span></li>
+            <li><span class="com">// → 원본 라인 그대로 복제</span></li>
+            <li><span class="com">// → Description에 AI 협상 분석</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 3 / Page B</span><span class="page">15 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 16 — F3 PAGE C ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 3 · Page C — 시연 영상</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fc-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>03 / 05</b></span><span class="stage">Page C · 시연 영상</span></div>
+        <h2 class="fa-title">시연 영상 — 재견적 자동 초안</h2>
+      </div>
+      <div></div>
+      <div class="fc-frame">
+        <span class="meta-corner">DEMO · F3</span><span class="duration-corner">0:30 · GIF</span>
+        <span class="corner-mark tl">+</span><span class="corner-mark tr">+</span><span class="corner-mark bl">+</span><span class="corner-mark br">+</span>
+        <div class="play-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="caption">"5% 인하 부탁드립니다" → 자동 재견적 초안</div>
+        <p class="sub">견적 발송 → 고객 메일 응답 → 의도 분류 = <b>'재견적' 배지</b> → 새 견적 자동 초안(원본 라인 복제, <code>(재견적)</code> 접미사, Description에 AI 협상 분석) → AE 검토.</p>
+      </div>
+      <div class="fc-action-row">
+        <span class="meta-info"><b>📎 GIF · ~30s</b> · 추후 첨부</span>
+        <a class="gdrive-btn" href="#" target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="txt"><span class="main">시연 영상 보기</span><span class="sub">Google Drive · MP4</span></span><span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 3 / Page C</span><span class="page">16 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 17 — F4 PAGE A ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 4 · Page A — 정의</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fa-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>04 / 05</b></span><span class="stage">Page A · 무엇 / 왜</span></div>
+        <h2 class="fa-title">L2C 자동화 — <span class="accent">견적 → 주문 → ERP 갭</span></h2>
+      </div>
+      <div class="fa-lede">견적 '수락' → 라인 자동 복사 → 영업 기회 수주 → 주문 자동 생성 → 약속 납기일 승계 → <b>ERP 동기화 한 번이면 사유·예상 출고일 자동 표시</b>.</div>
+      <div class="fa-cards">
+        <article class="fa-card">
+          <span class="num">/ 왜 도입했나</span>
+          <p><strong>입력 부담을 0으로 만드는 게 본 시스템의 핵심 가치.</strong> AE는 영업 기회 단계에서 약속 납기일 한 번 입력. 이후는 승인·통보 같은 의사결정만.</p>
+        </article>
+        <article class="fa-card navy">
+          <span class="num">/ 자동 흐름 5단</span>
+          <ul>
+            <li><strong>① 견적 '수락'</strong> → 라인 → 영업 기회 Products 복사</li>
+            <li><strong>② 영업 기회 수주</strong> → Order 자동 INSERT</li>
+            <li><strong>③ 약속 납기일</strong> → Order.EndDate 승계</li>
+            <li><strong>④ ERP 동기화</strong> → 사유 + 예상 출고일</li>
+            <li><strong>⑤ 위험 분류</strong> → D+3/+5/+7 · 미생산·미출고·재계획</li>
+          </ul>
+        </article>
+      </div>
+      <div class="philosophy-tag-large">
+        <div class="pt-num"><span class="nl">PRINCIPLE</span><span class="nv">02</span></div>
+        <div class="pt-body"><span class="pt-lbl">설계 철학 태그</span><span class="pt-ttl">AE 의사결정 중심 + 단계별 가이드</span><span class="pt-desc">"납기일을 저장해주세요" 게이트 메시지.</span></div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 4 / Page A</span><span class="page">17 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 18 — F4 PAGE B ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 4 · Page B — 핵심 로직</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fp-body">
+      <div class="fp-left">
+        <div class="fp-meta"><span class="ix">FEATURE <b>04 / 05</b></span><span class="stage">Page B · 핵심 로직</span></div>
+        <h2>견적 트리거 + 수주 트리거 + ERP 갭.</h2>
+        <div class="step-flow">
+          <div class="step-row"><span class="n">1</span><div class="b"><span class="t">견적 '수락' 전이 시</span><span class="d">QuoteTrigger → 라인 → OpportunityLineItem 자동 복사.</span></div></div>
+          <div class="step-row"><span class="n">2</span><div class="b"><span class="t">영업 기회 수주 전이 시</span><span class="d">Order INSERT + EndDate = <span class="api">Promised_Delivery_Date__c</span> 승계 + 라인 복제.</span></div></div>
+          <div class="step-row"><span class="n">3</span><div class="b"><span class="t">ERP 갭 결정론 매칭</span><span class="d">주문 고유 ID 해시 → 분기별 후보 풀에서 선택. 같은 주문 = 같은 결과.</span></div></div>
+        </div>
+        <div class="note-callout"><b>약속 납기일 단일 소스</b> — 영업 기회 1곳에만 저장. 견적·재견적·주문은 모두 이 필드를 참조.</div>
+      </div>
+      <div class="fp-right">
+        <div class="code-block">
+          <header><span class="lang">Apex · OrderTriggerHandler.cls</span><span class="ref">납기일 승계 발췌</span></header>
+          <ol class="code-lines">
+            <li><span class="com">// 견적 '수락' — 라인 복사</span></li>
+            <li><span class="kw">if</span> (q.Status == <span class="str">'수락'</span> &amp;&amp; oldStatus != <span class="str">'수락'</span>) {</li>
+            <li>   <span class="fn">copyQuoteLinesToOpportunityProducts</span>(q.Id);</li>
+            <li>}</li>
+            <li></li>
+            <li><span class="com">// 영업 기회 수주 — 주문 생성</span></li>
+            <li>toCreate.add(<span class="kw">new</span> <span class="typ">Order</span>(</li>
+            <li>   Opportunity__c = opp.Id,</li>
+            <li>   EndDate = opp.Promised_Delivery_Date__c, <span class="com">// 승계</span></li>
+            <li>));</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 4 / Page B</span><span class="page">18 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 19 — F4 PAGE C ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 4 · Page C — 시연 영상</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fc-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>04 / 05</b></span><span class="stage">Page C · 시연 영상</span></div>
+        <h2 class="fa-title">시연 영상 — L2C 자동화 + ERP 갭</h2>
+      </div>
+      <div></div>
+      <div class="fc-frame">
+        <span class="meta-corner">DEMO · F4</span><span class="duration-corner">0:40 · MP4</span>
+        <span class="corner-mark tl">+</span><span class="corner-mark tr">+</span><span class="corner-mark bl">+</span><span class="corner-mark br">+</span>
+        <div class="play-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="caption">납기 6/15 → 견적 → 수락 → 주문 → ERP 갭</div>
+        <p class="sub">영업 기회 약속 납기일 <b>6/15</b> 입력 → 견적 작성 → 라인 자동 복사 → '수락' → 주문 자동 생성 → ERP 동기화 → <b>"예상 출고 2026-06-20 (약속 6/15 → D+5 지연)"</b> 표시.</p>
+      </div>
+      <div class="fc-action-row">
+        <span class="meta-info"><b>📎 MP4 · ~40s</b> · 추후 첨부</span>
+        <a class="gdrive-btn" href="#" target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="txt"><span class="main">시연 영상 보기</span><span class="sub">Google Drive · MP4</span></span><span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 4 / Page C</span><span class="page">19 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 20 — F5 PAGE A (5-col mini cards) ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 5 · Page A — 정의</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fa-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>05 / 05</b></span><span class="stage">Page A · 무엇 / 왜</span></div>
+        <h2 class="fa-title">Lead 인입 AI 자동 추출 <span class="accent">+ Score 자동화</span></h2>
+      </div>
+      <div class="fa-lede">전화 메모·방문 노트·RFQ 이메일을 자연어 그대로 붙여넣으면 <b>AI가 6필드를 자동 추출하고 점수까지 매겨 Lead를 즉시 생성</b>한다.</div>
+      <div class="fa-cards five-col">
+        <article class="fa-card mini"><span class="num">/ 01</span><h4>전화 메모</h4><p>phoneLeadIntake LWC</p></article>
+        <article class="fa-card mini blue"><span class="num">/ 02</span><h4>방문 노트</h4><p>visitLeadIntake LWC</p></article>
+        <article class="fa-card mini navy"><span class="num">/ 03</span><h4>RFQ 이메일</h4><p>Inbound Email Service</p></article>
+        <article class="fa-card mini gold"><span class="num">/ 04</span><h4>6필드 자동 추출</h4><p>회사·담당·전화·부품·수량·납기</p></article>
+        <article class="fa-card mini error"><span class="num">/ 05</span><h4>Lead Score 자동</h4><p>채널·과거거래·사양·수량 4축</p></article>
+      </div>
+      <div class="philosophy-tag-large">
+        <div class="pt-num"><span class="nl">PRINCIPLE</span><span class="nv">02</span></div>
+        <div class="pt-body"><span class="pt-lbl">설계 철학 태그</span><span class="pt-ttl">AE 입력 부담 최소화</span><span class="pt-desc">textarea 한 번 붙여넣기 → 자동 추출 + 자동 점수.</span></div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 5 / Page A</span><span class="page">20 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 21 — F5 PAGE B ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 5 · Page B — 핵심 로직</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fp-body">
+      <div class="fp-left">
+        <div class="fp-meta"><span class="ix">FEATURE <b>05 / 05</b></span><span class="stage">Page B · 핵심 로직</span></div>
+        <h2>Prompt Builder + 정규식 hybrid + 점수 4축.</h2>
+        <div class="step-flow">
+          <div class="step-row"><span class="n">1</span><div class="b"><span class="t">자연어 → 6필드</span><span class="d">CallMemoExtract / SpecExtract Prompt Template이 한국어 노트에서 6필드 추출.</span></div></div>
+          <div class="step-row"><span class="n">2</span><div class="b"><span class="t">Hybrid fallback</span><span class="d">LLM 응답이 비거나 실패하면 한국어 정규식 추출로 자동 폴백. <span class="api">lastSource=ai/regex</span>.</span></div></div>
+          <div class="step-row"><span class="n">3</span><div class="b"><span class="t">Score 4축 자동 산정</span><span class="d">채널 + 과거 거래 이력 + 사양 명확도 + 수량 = 0~100점. LeadTrigger가 자동 호출.</span></div></div>
+        </div>
+        <div class="note-callout"><b>안전 정책</b> — 추출 0건이면 status=extract_empty 로 분기해 "흐림/누락 확인" 안내. 임의 더미값 절대 채움 금지.</div>
+      </div>
+      <div class="fp-right">
+        <div class="code-block">
+          <header><span class="lang">Apex · LeadScoringService.cls</span><span class="ref">Score 4축</span></header>
+          <ol class="code-lines">
+            <li><span class="kw">public static</span> <span class="typ">Integer</span> <span class="fn">calculateScore</span>(<span class="typ">Lead</span> l) {</li>
+            <li>   <span class="typ">Integer</span> s = 0;</li>
+            <li>   s += <span class="fn">channelWeight</span>(l.LeadSource);</li>
+            <li>   s += <span class="fn">tradeHistory</span>(l.Company);</li>
+            <li>   s += <span class="fn">specClarity</span>(l.RFQ_Spec_JSON__c);</li>
+            <li>   s += <span class="fn">quantityScore</span>(l.RFQ_Qty__c);</li>
+            <li>   <span class="kw">return</span> <span class="typ">Math</span>.<span class="fn">min</span>(s, 100);</li>
+            <li>}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 5 / Page B</span><span class="page">21 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 22 — F5 PAGE C ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 06 · 주요 기능</span><span class="dot">/</span><b>기능 5 · Page C — 시연 영상</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="fc-body">
+      <div>
+        <div class="fa-meta"><span class="ix">FEATURE <b>05 / 05</b></span><span class="stage">Page C · 시연 영상</span></div>
+        <h2 class="fa-title">시연 영상 — Lead 인입 AI 추출</h2>
+      </div>
+      <div></div>
+      <div class="fc-frame">
+        <span class="meta-corner">DEMO · F5</span><span class="duration-corner">0:25 · GIF</span>
+        <span class="corner-mark tl">+</span><span class="corner-mark tr">+</span><span class="corner-mark bl">+</span><span class="corner-mark br">+</span>
+        <div class="play-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="caption">"한라정공 박과장 02-555-1234, 베어링 6204 100개 납기 4/30"</div>
+        <p class="sub">전화 메모 textarea에 자연어 그대로 붙여넣고 <code>[AI 추출]</code> 클릭 → 6필드(회사·담당·전화·부품·수량·납기) 자동 채움 → <b>Lead Score 92점 자동 산정</b> → Lead 자동 생성 + 페이지로 navigation.</p>
+      </div>
+      <div class="fc-action-row">
+        <span class="meta-info"><b>📎 GIF · ~25s</b> · 추후 첨부</span>
+        <a class="gdrive-btn" href="#" target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="txt"><span class="main">시연 영상 보기</span><span class="sub">Google Drive · MP4</span></span><span class="arrow">↗</span></a>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기능 5 / Page C</span><span class="page">22 / <b>31</b></span></footer>
+  </section>
+
+  <!-- ═════ SLIDE 23 — 기타 기능 한눈에 ═════ -->
+  <section class="s">
+    <header class="s-head">
+      <div class="crumb"><span>Section 07 · 기타 기능</span><span class="dot">/</span><b>5개 보조 기능 한눈에</b></div>
+      <span class="brand"><span class="mark"></span>HDP-L2C · v1.0</span>
+    </header>
+    <div class="misc-body">
+      <div class="misc-head">
+        <div>
+          <div class="eyebrow">05 · 기타 기능 한눈에</div>
+          <h2>5개의 작지만 <span class="accent">중요한 보조 기능</span></h2>
+        </div>
+        <span class="meta">SCALE · 0.5×</span>
+      </div>
+      <div class="misc-grid">
+        <article class="misc-card">
+          <span class="num">/ 01</span><h3>Lead 인입 3채널</h3>
+          <p>전화(통화 메모 AI 자동) · 방문(방문 노트 AI 자동) · RFQ 이메일(자동 Lead 생성). <b>AE 입력 부담 90% 감축.</b></p>
+        </article>
+        <article class="misc-card">
+          <span class="num">/ 02</span><h3>단계 게이트</h3>
+          <p>발굴 → 견적 작성 전환 시 사업자번호 + 첨부 + 납기일 3-조건 자동 점검. 전환 메시지가 <b>다음 액션</b>을 안내.</p>
+        </article>
+        <article class="misc-card featured">
+          <span class="num">/ 03</span><h3>장기 미수금 알림</h3>
+          <p><b>60일+ 미수 주문</b> 자동 식별, 해당 고객사 상단에 빨간 띠 자동 표시. AE 누락 전 시스템이 먼저 잡는다.</p>
+        </article>
+        <article class="misc-card">
+          <span class="num">/ 04</span><h3>분할 입금 추적</h3>
+          <p>한 주문에 여러 회차 입금 등록, <b>잔액·완납 여부 자동 계산.</b> 한국 영업의 분납 관행 그대로.</p>
+        </article>
+        <article class="misc-card" style="grid-column: span 2;">
+          <span class="num">/ 05</span><h3>디자인 시스템 통일</h3>
+          <p>컬러 8토큰 · SLDS 아이콘 · 점수 카드 좌측 strip 패턴 일관 적용. <b>5종 기술 화면이 한 제품처럼 보인다.</b></p>
+        </article>
+      </div>
+    </div>
+    <footer class="s-foot"><span>한도정밀 · L2C · 기타 기능 한눈에</span><span class="page">23 / <b>31</b></span></footer>
+  </section>
+
+  <div class="preview-label">▲ TONE PREVIEW v1 끝 — 위는 톤 확인용. 본격 교체는 별도 작업.</div>
+</div>
+
+</body>
+</html>

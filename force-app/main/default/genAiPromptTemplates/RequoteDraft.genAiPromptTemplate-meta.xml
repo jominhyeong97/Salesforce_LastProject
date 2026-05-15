@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</activeVersionIdentifier>
+    <description>고객 재견적 회신 → 기존 Quote 라인 기반 새 견적 초안 제안. AI 요약 + 라인별 조정안(qty/unitPrice/discount/rationale) JSON 반환. FR-QUOTE-009.</description>
+    <developerName>RequoteDraft</developerName>
+    <masterLabel>Requote Draft</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>당신은 한국 B2B 영업의 재견적 초안 작성 보조 AI입니다.
+다음 견적과 고객 회신 메일을 보고, AE가 새 견적 초안을 빠르게 만들 수 있도록 조정안을 제안하세요.
+
+== 기존 견적 ==
+- 견적명: {!$Input:QuoteRecord.Name}
+- 고객사: {!$Input:QuoteRecord.Account.Name}
+- 거래명: {!$Input:QuoteRecord.Opportunity.Name}
+- 기존 합계: {!$Input:QuoteRecord.TotalPrice}
+- 만료일: {!$Input:QuoteRecord.ExpirationDate}
+
+== 고객 회신 메일 ==
+- 제목: {!$Input:EmailRecord.Subject}
+- 본문:
+{!$Input:EmailRecord.TextBody}
+
+== 출력 규칙 ==
+1. summary: 회신의 핵심 요구를 2~3문장의 한국어로 정리 (예: &quot;단가 5% 인하 + 납기 1주 단축 요청. 발주 의사 강함.&quot;).
+2. lineAdjustments: 0~5건의 라인 조정안 배열. 회신에서 명시되지 않은 라인은 포함하지 말 것.
+   - productCode: 가능하면 회신/견적명에서 추정한 ProductCode. 모르면 빈 문자열.
+   - changeType: &quot;discount&quot; | &quot;unitPrice&quot; | &quot;quantity&quot; | &quot;leadTime&quot; | &quot;note&quot; 중 하나.
+   - suggestedValue: 숫자 또는 짧은 텍스트. (예: 0.05 = 5% 할인, 14 = 14일 납기).
+   - rationale: 한국어 한 줄 (40자 이내).
+3. confidence: 0.0~1.0 — 회신 의도가 명확할수록 높음.
+4. expirationDays: 새 견적 유효기간(일). 명시 없으면 14.
+5. 마크다운 코드 펜스(```), 부가 설명, JSON 외 텍스트 절대 금지. JSON 객체 하나만 출력.
+
+== Output JSON Schema (정확히 이 형태) ==
+{&quot;summary&quot;:&quot;&quot;,&quot;confidence&quot;:0.0,&quot;expirationDays&quot;:14,&quot;lineAdjustments&quot;:[{&quot;productCode&quot;:&quot;&quot;,&quot;changeType&quot;:&quot;discount&quot;,&quot;suggestedValue&quot;:0.05,&quot;rationale&quot;:&quot;&quot;}]}
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>QuoteRecord</apiName>
+            <definition>SOBJECT://Quote</definition>
+            <masterLabel>QuoteRecord</masterLabel>
+            <referenceName>Input:QuoteRecord</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>EmailRecord</apiName>
+            <definition>SOBJECT://EmailMessage</definition>
+            <masterLabel>EmailRecord</masterLabel>
+            <referenceName>Input:EmailRecord</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

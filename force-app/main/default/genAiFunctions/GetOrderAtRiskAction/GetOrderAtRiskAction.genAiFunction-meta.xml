@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>납기 위험 점수 임계값 이상의 Order 목록을 반환합니다. PoNumber, Production_Status, 고객사명, 마지막 ERP 동기화 시각 포함. 사용자가 "위험 Order", "납기 위험", "사전 통보 필요한 주문" 같은 자연어로 물을 때 사용.</description>
+    <invocationTarget>GetOrderAtRiskAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Get Orders At Risk</masterLabel>
+</GenAiFunction>

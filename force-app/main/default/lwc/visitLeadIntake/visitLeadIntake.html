@@ -1,0 +1,80 @@
+<template>
+    <lightning-card title="방문 Lead 등록" icon-name="standard:visits">
+        <div class="slds-p-around_medium">
+
+            <lightning-textarea
+                name="memo"
+                label="방문 노트 (자유 텍스트)"
+                placeholder="예) 광명MES 박 부장 미팅 010-9876-5432, 정밀가공품 모델C 200개, 다음달 초까지"
+                value={memo}
+                onchange={handleMemoChange}
+                class="slds-m-bottom_x-small">
+            </lightning-textarea>
+
+            <div class="slds-m-bottom_medium">
+                <lightning-button
+                    label="✨ 노트로 자동 채우기"
+                    variant="brand"
+                    icon-name="utility:magicwand"
+                    onclick={handleExtract}
+                    disabled={extracting}>
+                </lightning-button>
+                <lightning-button
+                    label="초기화"
+                    onclick={handleReset}
+                    class="slds-m-left_small">
+                </lightning-button>
+            </div>
+
+            <template lwc:if={extractError}>
+                <div class="slds-text-color_error slds-m-bottom_small">{extractError}</div>
+            </template>
+
+            <div class={companyClass}>
+                <lightning-input label="회사명" value={form.company} data-field="company" onchange={handleFieldChange} required></lightning-input>
+            </div>
+            <div class={contactClass}>
+                <lightning-input label="담당자" value={form.contactName} data-field="contactName" onchange={handleFieldChange} required></lightning-input>
+            </div>
+            <div class={titleClass}>
+                <lightning-input label="직급" value={form.contactTitle} data-field="contactTitle" onchange={handleFieldChange}></lightning-input>
+            </div>
+            <div class={phoneClass}>
+                <lightning-input label="연락처" value={form.phone} data-field="phone" onchange={handleFieldChange}></lightning-input>
+            </div>
+            <div class={partClass}>
+                <lightning-input label="요청 부품" value={form.partName} data-field="partName" onchange={handleFieldChange}></lightning-input>
+            </div>
+            <div class={qtyClass}>
+                <lightning-input label="수량" type="number" value={form.quantity} data-field="quantity" onchange={handleFieldChange}></lightning-input>
+            </div>
+            <div class={dateClass}>
+                <lightning-input label="요청 납기" value={form.requestedDate} data-field="requestedDate" onchange={handleFieldChange}></lightning-input>
+            </div>
+
+            <div class="slds-m-top_medium">
+                <lightning-button
+                    label="저장 (Lead 생성)"
+                    variant="success"
+                    onclick={handleSave}
+                    disabled={saving}>
+                </lightning-button>
+            </div>
+
+            <template lwc:if={saveError}>
+                <div class="slds-text-color_error slds-m-top_small">{saveError}</div>
+            </template>
+            <template lwc:if={lastLeadId}>
+                <div class="slds-box slds-theme_success slds-m-top_medium">
+                    ✅ Lead 생성 완료. <strong>Score: {lastLeadScore}</strong> ({scoreTier})
+                    <lightning-button
+                        label="Lead 열기"
+                        variant="base"
+                        onclick={handleOpenLead}
+                        class="slds-m-left_small">
+                    </lightning-button>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

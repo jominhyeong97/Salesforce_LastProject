@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_4</activeVersionIdentifier>
+    <description>한국 사업자등록증 이미지에서 4필드(사업자번호/상호/대표자/사업장 소재지) + raw_text 추출하는 멀티모달 Prompt Template</description>
+    <developerName>BusinessLicenseExtract</developerName>
+    <masterLabel>Business License Extract</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>You are a Korean business registration certificate (사업자등록증) information extractor.
+Read all visible text from the provided image and extract the 4 structured fields below, plus copy all visible text into `raw_text`.
+
+== ABSOLUTE RULES ==
+1. Copy values VERBATIM from the image. Do not normalize, translate, or correct.
+2. Output a single JSON object matching the schema below EXACTLY. No markdown fences, no commentary, no extra keys.
+3. If a field is not visible or unreadable, set its value to &quot;&quot; (empty string).
+4. `raw_text` MUST contain all visible text in reading order, joined by &quot; | &quot;.
+
+== FIELD HINTS (Korean business registration certificate) ==
+[businessNumber] — 등록번호 / 사업자등록번호.
+- Format: 10 digits with two hyphens, e.g. &quot;471-81-00778&quot;, &quot;100-00-00009&quot;.
+- Located near top, labeled 등록번호 or 사업자등록번호.
+
+[companyName] — 상호 / 법인명.
+- Examples (verbatim): &quot;(주)대광건설기계&quot;, &quot;주식회사 한도정밀&quot;, &quot;삼성전자(주)&quot;.
+- KEEP printed prefixes/suffixes: 주식회사, (주), ㈜, Co.,Ltd., Inc.
+- Labeled 상호 / 법인명 / 회사명.
+
+[ceoName] — 대표자 / 성명.
+- Korean full name, surname-first single string. Examples: &quot;홍길동&quot;, &quot;김철수&quot;, &quot;이영희&quot;.
+- Labeled 대표자 / 성명.
+
+[address] — 사업장 소재지.
+- Single line as printed. Examples (verbatim):
+    &quot;경기도 안산시 단원구 산단로 123&quot;
+    &quot;서울특별시 강남구 테헤란로 152, 17층&quot;
+- Labeled 사업장 소재지 / 본점 소재지 / 주소.
+
+== Output JSON Schema (return EXACTLY this shape) ==
+{&quot;businessNumber&quot;:&quot;&quot;,&quot;companyName&quot;:&quot;&quot;,&quot;ceoName&quot;:&quot;&quot;,&quot;address&quot;:&quot;&quot;,&quot;raw_text&quot;:&quot;&quot;}
+
+Return ONLY the JSON object. No markdown fences, no commentary, no extra text.
+
+Business license image: {!$Input:ContentDocument.Id}
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>ContentDocument</apiName>
+            <definition>SOBJECT://ContentDocument</definition>
+            <masterLabel>ContentDocument</masterLabel>
+            <referenceName>Input:ContentDocument</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_4</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

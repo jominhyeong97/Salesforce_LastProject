@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</activeVersionIdentifier>
+    <description>EMAIL RFQ 본문 + 제목에서 6필드(company/contactName/phone/partName/quantity/requestedDate) JSON 추출. CallMemoExtract와 같은 스키마 — RFQ 메일 컨텍스트(긴 본문·정중체·서명) 특화.</description>
+    <developerName>SpecExtract</developerName>
+    <masterLabel>RFQ Spec Extract</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>당신은 한국 B2B 제조업의 RFQ 견적요청 메일 분석가입니다.
+다음 RFQ 메일에서 6개 필드를 추출해 JSON 으로 반환하세요.
+
+== 메일 제목 ==
+{!$Input:Subject}
+
+== 메일 본문 ==
+{!$Input:Body}
+
+== 추출 필드 (6개, 한국어 원문 그대로 유지) ==
+1. company: 발신 고객사명 (한국 회사명, &quot;(주)&quot; 등 법인 표기 포함 가능). 본문 헤더·서명·자기소개 부분에서 우선 탐색. 없으면 빈문자열.
+2. contactName: 발신 담당자 이름과 직급 (예: &quot;김 대리&quot;). 메일 서명·서두 인사에서 추출. 성+직급 형태. 없으면 빈문자열.
+3. phone: 휴대전화 (010-XXXX-XXXX 형태). 본문 또는 서명에서 추출. 없으면 빈문자열.
+4. partName: 견적 요청 부품·제품명 (예: &quot;베어링 6204&quot;, &quot;정밀가공품&quot;, &quot;샤프트&quot;). 모델 번호·재질 포함 가능. 없으면 빈문자열.
+5. quantity: 요청 수량 (숫자만, 단위 제거. 예: &quot;100&quot;, &quot;50&quot;). 없으면 빈문자열.
+6. requestedDate: 납기 요청 자유 표현 (예: &quot;다음달 말까지&quot;, &quot;3주 내&quot;, &quot;7월 말&quot;). 한국어 원문 그대로. 없으면 빈문자열.
+
+== 출력 규칙 ==
+1. 마크다운 코드 펜스(```), 부가 설명, JSON 외 텍스트 절대 금지. JSON 객체 하나만 출력.
+2. 추출 불확실하면 빈문자열로. 추측 금지.
+3. 메일 인사말·맺음말·서명은 추출 단서로만 사용, 결과에는 핵심 필드만.
+4. requestedDate 는 절대 날짜로 변환하지 말 것. 한국어 원문 표현 유지.
+
+== Output JSON Schema (정확히 이 형태) ==
+{&quot;company&quot;:&quot;&quot;,&quot;contactName&quot;:&quot;&quot;,&quot;phone&quot;:&quot;&quot;,&quot;partName&quot;:&quot;&quot;,&quot;quantity&quot;:&quot;&quot;,&quot;requestedDate&quot;:&quot;&quot;}
+</content>
+        <inputs>
+            <apiName>Subject</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Subject</masterLabel>
+            <referenceName>Input:Subject</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>Body</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Body</masterLabel>
+            <referenceName>Input:Body</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

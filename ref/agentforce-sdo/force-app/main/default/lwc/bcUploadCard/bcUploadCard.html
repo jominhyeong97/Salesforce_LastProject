@@ -1,0 +1,180 @@
+<template>
+    <lightning-card title="명함 등록" icon-name="standard:lead">
+
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+            <!-- ============ Hero: Dropzone (mobile-first) ============ -->
+            <div class={dropZoneClass}
+                 ondragover={handleDragOver}
+                 ondragleave={handleDragLeave}
+                 ondrop={handleDrop}>
+
+                <div class="bc-hero__icon" aria-hidden="true">
+                    <lightning-icon icon-name="utility:upload" alternative-text="업로드" size="small" variant="inverse"></lightning-icon>
+                </div>
+
+                <h2 class="slds-text-heading_small slds-m-bottom_xx-small">명함 이미지 업로드</h2>
+
+                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+                    사진을 찍거나 파일을 선택하세요. 여러 장 연속 업로드 가능.
+                </p>
+
+                <div class="bc-hero__actions">
+                    <lightning-button
+                        label="카메라 촬영"
+                        icon-name="utility:photo"
+                        variant="brand"
+                        stretch
+                        onclick={handleCameraClick}
+                        class="bc-hero__btn">
+                    </lightning-button>
+                    <lightning-button
+                        label="앨범에서 선택"
+                        icon-name="utility:image"
+                        variant="neutral"
+                        stretch
+                        onclick={handleAlbumClick}
+                        class="bc-hero__btn">
+                    </lightning-button>
+                </div>
+
+                <input type="file"
+                       accept="image/*"
+                       capture="environment"
+                       onchange={handleFileChange}
+                       class="slds-hide"
+                       data-id="cameraInput"/>
+                <input type="file"
+                       accept="image/*"
+                       onchange={handleFileChange}
+                       class="slds-hide"
+                       data-id="albumInput"/>
+
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small bc-hero__hint">
+                    JPG / PNG · 최대 15MB
+                </p>
+            </div>
+
+            <!-- ============ Queue (compact) ============ -->
+            <div class="slds-m-top_medium">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                    <h3 class="slds-text-title_caps">처리 현황</h3>
+                    <template lwc:if={hasJobs}>
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <span class="slds-text-body_small slds-text-color_weak slds-m-right_x-small">
+                                {queueLabel}
+                            </span>
+                            <lightning-button-icon
+                                icon-name="utility:close"
+                                alternative-text="완료된 항목 정리"
+                                title="완료 항목 정리"
+                                variant="bare"
+                                size="small"
+                                onclick={handleClearCompleted}>
+                            </lightning-button-icon>
+                        </div>
+                    </template>
+                </div>
+
+                <template lwc:if={hasJobs}>
+                    <ul class="bc-job-list" aria-live="polite">
+                        <template for:each={jobs} for:item="job">
+                            <li key={job.id} class={job.itemClass}>
+                                <article class="slds-media slds-media_small slds-p-around_x-small">
+                                    <div class="slds-media__figure bc-thumb">
+                                        <template lwc:if={job.thumbnailUrl}>
+                                            <img src={job.thumbnailUrl} alt="" class="bc-thumb__img"/>
+                                        </template>
+                                        <template lwc:else>
+                                            <div class="bc-thumb__placeholder">
+                                                <lightning-icon icon-name="doctype:image" alternative-text="이미지" size="x-small"></lightning-icon>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                            <span class="slds-truncate bc-filename" title={job.fileName}>
+                                                {job.fileName}
+                                            </span>
+                                            <lightning-button-icon
+                                                icon-name="utility:close"
+                                                alternative-text="이 항목 닫기"
+                                                variant="bare"
+                                                size="x-small"
+                                                data-id={job.id}
+                                                onclick={handleDismissJob}>
+                                            </lightning-button-icon>
+                                        </div>
+
+                                        <p class="slds-text-body_small slds-text-color_weak">
+                                            {job.statusLabel} · {job.elapsedLabel}
+                                        </p>
+
+                                        <template lwc:if={job.isActive}>
+                                            <div class="slds-m-top_xxx-small">
+                                                <lightning-progress-bar value={job.progress} size="small"></lightning-progress-bar>
+                                            </div>
+                                        </template>
+
+                                        <template lwc:if={job.isSuccess}>
+                                            <p class="slds-text-body_small slds-truncate slds-m-top_xxx-small">
+                                                <strong>{job.company}</strong>
+                                                <template lwc:if={job.lastName}> · {job.lastName}</template>
+                                            </p>
+                                            <div class="bc-job__actions slds-m-top_xx-small">
+                                                <lightning-button
+                                                    label="명함"
+                                                    size="small"
+                                                    data-id={job.id}
+                                                    onclick={handleViewCard}
+                                                    class="bc-job__btn">
+                                                </lightning-button>
+                                                <lightning-button
+                                                    label="Lead 보기"
+                                                    variant="brand"
+                                                    size="small"
+                                                    data-id={job.id}
+                                                    onclick={handleViewLead}
+                                                    class="bc-job__btn">
+                                                </lightning-button>
+                                            </div>
+                                        </template>
+
+                                        <template lwc:if={job.isFailed}>
+                                            <p class="slds-text-color_destructive slds-text-body_small slds-m-top_xxx-small">
+                                                {job.errorMessage}
+                                            </p>
+                                            <template lwc:if={job.businessCardId}>
+                                                <div class="bc-job__actions slds-m-top_xx-small">
+                                                    <lightning-button
+                                                        label="명함 보기"
+                                                        size="small"
+                                                        data-id={job.id}
+                                                        onclick={handleViewCard}
+                                                        class="bc-job__btn">
+                                                    </lightning-button>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </article>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <template lwc:else>
+                    <div class="bc-empty">
+                        <div class="bc-empty__icon" aria-hidden="true">
+                            <lightning-icon icon-name="standard:document_reference" size="medium" alternative-text="처리 결과"></lightning-icon>
+                        </div>
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                            처리한 명함이 여기에 표시됩니다.
+                        </p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>

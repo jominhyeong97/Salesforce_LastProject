@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Shipped_Date__c</fullName>
+    <description>AE 수동 입력 출고일. FR-ORDER-006. 입금 추적 시작점.</description>
+    <label>출고일</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Quote_Tracking_Base_URL</fullName>
+        <categories>Quote</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Quote Email Tracking Site Base URL</shortDescription>
+        <value>__UNSET__</value>
+    </labels>
+    <labels>
+        <fullName>AI_Loading_Message</fullName>
+        <categories>UX</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>AI 로딩 공통 메시지</shortDescription>
+        <value>잠시만 기다려 주세요... AI가 답변을 작성 중이에요</value>
+    </labels>
+</CustomLabels>

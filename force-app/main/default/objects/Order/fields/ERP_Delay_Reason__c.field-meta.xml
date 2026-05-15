@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ERP_Delay_Reason__c</fullName>
+    <description>ERP 측이 보고한 지연 사유 (한국어). 미생산/미출고/출고 보류/재계획 등. D38 Phase 2.</description>
+    <inlineHelpText>ERP 동기화 시 받은 지연 사유. 사전 통보 메일·시연 narrative 에 활용.</inlineHelpText>
+    <label>ERP 지연 사유</label>
+    <length>80</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

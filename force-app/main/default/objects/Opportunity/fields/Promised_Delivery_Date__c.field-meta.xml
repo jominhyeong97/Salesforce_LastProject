@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Promised_Delivery_Date__c</fullName>
+    <description>영업이 고객과 합의한 약속 납기일. 견적 작성 단계 전환 게이트 (StageGateService) 의 필수 입력 항목. Won → Order 자동 생성 시 Order.EndDate 로 복사된다. D38.</description>
+    <inlineHelpText>고객과 합의한 납기일. 견적 작성으로 전환하려면 필수.</inlineHelpText>
+    <label>약속 납기일</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <canEscalate>false</canEscalate>
+    <description>This topic is selected when the user asks about their daily priorities, orders at risk of delayed delivery, a summary of a specific customer account, or requires a follow-up email draft for a quote. It addresses routine sales cockpit queries.</description>
+    <developerName>p_16jdM000003KdMr_Sales_Cockpit_Assistant</developerName>
+    <genAiFunctions>
+        <functionName>GetTodayPriorityListAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>GetOrderAtRiskAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>GetAccountSummaryAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>DraftFollowupEmailAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>GetCrossSellCandidatesAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>EmployeeCopilot__AnswerQuestionsWithKnowledge</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>If the query is about daily priorities, use GetTodayPriorityListAction.</description>
+        <developerName>instruction_0</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_0</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the query is about at-risk orders, use GetOrderAtRiskAction.</description>
+        <developerName>instruction_1</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_1</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the query is about a specific customer account summary, use GetAccountSummaryAction.</description>
+        <developerName>instruction_2</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_2</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the query is about drafting a follow-up email for a quote, use DraftFollowupEmailAction.</description>
+        <developerName>instruction_3</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_3</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the query is about cross-sell recommendations, product suggestions, or what else to sell to an account, use GetCrossSellCandidatesAction.</description>
+        <developerName>instruction_4</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_4</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <language>ko</language>
+    <localDeveloperName>p_16jdM000003KdMr_Sales_Cockpit_Assistant</localDeveloperName>
+    <masterLabel>Sales Cockpit Assistant</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your job is to only assist with sales cockpit tasks, including retrieving daily priorities, identifying at-risk orders, summarizing customer account details, and drafting follow-up emails for quotes. You cannot provide pricing, discounts, or delivery dates.</scope>
+</GenAiPlugin>

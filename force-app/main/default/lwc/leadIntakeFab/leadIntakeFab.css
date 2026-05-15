@@ -1,0 +1,108 @@
+:host {
+    position: static;
+}
+
+/* ─── FAB — chatbotFab 좌측 (right: 100px) ─── */
+.fab {
+    position: fixed;
+    bottom: 24px;
+    right: 100px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(22, 163, 74, 0.45),
+                0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: float-bounce 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+.fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 26px rgba(22, 163, 74, 0.55);
+}
+.fab--open {
+    animation: none;
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+}
+.fab__icon {
+    font-size: 1.7rem;
+    color: white;
+    line-height: 1;
+}
+
+@keyframes float-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* ─── 전화 Lead 모달 (중앙 큰 모달) ─── */
+.lead-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9997;
+    animation: backdrop-fade 0.18s ease-out;
+}
+
+.lead-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 680px;
+    max-width: 92vw;
+    height: 95vh;
+    max-height: 95vh;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.32),
+                0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 9998;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modal-pop 0.24s ease-out;
+}
+.lead-modal__body {
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+.lead-modal c-phone-lead-intake {
+    display: block;
+}
+
+.lead-modal__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.lead-modal__close:hover { background: rgba(0, 0, 0, 0.78); }
+
+@keyframes backdrop-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes modal-pop {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.94); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

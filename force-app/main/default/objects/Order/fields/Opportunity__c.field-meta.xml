@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opportunity__c</fullName>
+    <description>거래(Opportunity) 연결. 이 Org는 표준 Order.OpportunityId 미활성화 상태라 custom lookup 으로 대체. Won_To_Order Flow 가 채움.</description>
+    <label>거래</label>
+    <referenceTo>Opportunity</referenceTo>
+    <relationshipLabel>주문</relationshipLabel>
+    <relationshipName>Orders</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

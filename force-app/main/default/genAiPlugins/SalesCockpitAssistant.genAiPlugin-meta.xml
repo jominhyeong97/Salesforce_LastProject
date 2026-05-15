@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
+    <canEscalate>false</canEscalate>
+    <description>AE 가 콕피트에서 자연어로 묻는 영업 일상 질의 처리. 오늘 할 일·위험 Order·특정 고객사의 미수금/신용/사업자번호·발송한 견적의 follow-up 메일 초안 작성 등. Sales Cloud Lead/Quote/Order/Account 데이터를 읽고 한국어로 답변. 한국 비즈니스 정서(₩·사업자번호·한국식 직급) 유지. 가격·할인·납기 등을 임의로 새로 제시하지 말 것 — AE 가 결정하도록 정보·요약·초안만 제공.</description>
+    <developerName>SalesCockpitAssistant</developerName>
+    <genAiFunctions>
+        <functionName>GetTodayPriorityListAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>GetOrderAtRiskAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>GetAccountSummaryAction</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>DraftFollowupEmailAction</functionName>
+    </genAiFunctions>
+    <language>ko</language>
+    <localDeveloperName>SalesCockpitAssistant</localDeveloperName>
+    <masterLabel>Sales Cockpit Assistant</masterLabel>
+    <pluginType>Topic</pluginType>
+</GenAiPlugin>

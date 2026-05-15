@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</activeVersionIdentifier>
+    <description>Opportunity 거래 분석 — 한국어 자연어 요약 + 추천 액션 3가지 JSON 반환. 정량 점수는 OppScoreService(Apex)가 별도 처리.</description>
+    <developerName>OpportunityInsight</developerName>
+    <masterLabel>Opportunity Insight</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>당신은 한국 B2B 영업의 거래 분석 전문가입니다.
+다음 Opportunity의 정보를 분석하여 한국어로 한 단락 요약과 추천 액션 3가지를 작성하세요.
+
+== 거래 정보 ==
+- 거래명: {!$Input:OppRecord.Name}
+- 영업 단계: {!$Input:OppRecord.StageName}
+- 예상 금액: {!$Input:OppRecord.Amount}
+- 마감일: {!$Input:OppRecord.CloseDate}
+- 고객사: {!$Input:OppRecord.Account.Name}
+- 사업자번호: {!$Input:OppRecord.Account.Business_Number__c}
+- 대표자: {!$Input:OppRecord.Account.CEO_Name__c}
+- 외부 신용점수: {!$Input:OppRecord.Account.External_Credit_Score__c}
+- 장기미수 보유: {!$Input:OppRecord.Account.Long_Term_Debtor__c}
+- 누적 미수금: {!$Input:OppRecord.Account.Total_AR__c}
+
+== 출력 규칙 ==
+1. summary: 거래의 현재 상황·긴급도를 한 문단(2~3문장). 자연스러운 영업 톤(존댓말 X, 간결).
+2. nextActions: AE가 이번 주 안에 할 구체 행동 3가지. 단계 전환·견적 발송·follow-up·미수금 회수 같은 실무 수준.
+3. 위험 요소(장기미수·낮은 신용점수·발굴 단계 정체 등)는 summary나 nextActions에 자연스럽게 녹여 표현.
+4. 마크다운 코드 펜스(```), 부가 설명, JSON 외 텍스트 절대 금지. JSON 객체 하나만 출력.
+
+== Output JSON Schema (정확히 이 형태) ==
+{"summary":"","nextActions":["","",""]}
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>OppRecord</apiName>
+            <definition>SOBJECT://Opportunity</definition>
+            <masterLabel>OppRecord</masterLabel>
+            <referenceName>Input:OppRecord</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

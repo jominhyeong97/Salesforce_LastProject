@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AE_Edit_Count__c</fullName>
+    <defaultValue>0</defaultValue>
+    <description>AE 인라인 편집 횟수. FR-QUOTE-002.</description>
+    <label>AE 편집 횟수</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

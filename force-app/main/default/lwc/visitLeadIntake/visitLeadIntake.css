@@ -1,0 +1,16 @@
+.field-extracted {
+    border-left: 3px solid #f1c40f;
+    padding-left: 0.75rem;
+    background: #fffce7;
+    position: relative;
+    border-radius: 0 4px 4px 0;
+}
+.field-extracted::after {
+    content: "✨ AI";
+    position: absolute;
+    top: 0.1rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    color: #ca8a04;
+    font-weight: bold;
+}

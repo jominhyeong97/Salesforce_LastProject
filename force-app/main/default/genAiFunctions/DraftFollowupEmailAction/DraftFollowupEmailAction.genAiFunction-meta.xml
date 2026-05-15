@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Quote 의 follow-up 메일 한국어 초안(제목+본문)을 작성합니다. Prompt Builder FollowupDraft 호출, 실패 시 자동 fallback. 발송 후 1주일 이상이면 [재요청] 톤. 사용자가 "Q-XXX follow-up", "응답 지연 메일", "재발송 안내" 같은 자연어로 물을 때 사용. 메일은 AE 가 검토 후 직접 발송.</description>
+    <invocationTarget>DraftFollowupEmailAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Draft Followup Email</masterLabel>
+</GenAiFunction>

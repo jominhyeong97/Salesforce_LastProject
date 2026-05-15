@@ -1,0 +1,114 @@
+<template>
+    <lightning-card title="ERP 납기 위험" icon-name="utility:warning">
+        <div slot="actions">
+            <lightning-button
+                label={syncButtonLabel}
+                variant="brand"
+                onclick={handleSync}
+                disabled={isSyncing}>
+            </lightning-button>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-m-vertical_medium">
+                    <lightning-spinner alternative-text={labels.aiLoading} size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <p class="slds-text-color_destructive slds-m-bottom_x-small">{errorMessage}</p>
+            </template>
+
+            <template lwc:if={hasView}>
+                <!-- 점수 카드 -->
+                <div class={cardClass}>
+                    <div class="bl-head">
+                        <div>
+                            <div class="bl-label">납기 위험 점수</div>
+                            <div class="bl-score">{scoreText}</div>
+                        </div>
+                        <span class={badgeClass}>{riskLabel}</span>
+                    </div>
+
+                    <template lwc:if={isSynced}>
+                        <div class="bl-bar">
+                            <div class="bl-bar-fill" style={scoreBarStyle}></div>
+                        </div>
+                    </template>
+
+                    <div class="bl-meta">
+                        <div class="bl-meta-item">
+                            <span class="bl-meta-label">생산 상태</span>
+                            <span class="bl-meta-value">{statusLabel}</span>
+                        </div>
+                        <div class="bl-meta-item">
+                            <span class="bl-meta-label">납기일</span>
+                            <span class="bl-meta-value">
+                                <template lwc:if={hasEndDate}>
+                                    <lightning-formatted-date-time value={view.endDate} year="numeric" month="2-digit" day="2-digit"></lightning-formatted-date-time>
+                                    <template lwc:if={view.dueLabel}>
+                                        <span class={dueBadgeClass}>{view.dueLabel}</span>
+                                    </template>
+                                </template>
+                                <template lwc:else>-</template>
+                            </span>
+                        </div>
+                        <div class="bl-meta-item">
+                            <span class="bl-meta-label">최근 동기화</span>
+                            <span class="bl-meta-value">{lastSyncedDisplay}</span>
+                        </div>
+                        <template lwc:if={hasErpForecast}>
+                            <div class="bl-meta-item bl-meta-item_erp">
+                                <span class="bl-meta-label">ERP 예상 출고</span>
+                                <span class="bl-meta-value">
+                                    <template lwc:if={hasExpectedShipDate}>
+                                        <lightning-formatted-date-time value={view.expectedShipDate} year="numeric" month="2-digit" day="2-digit"></lightning-formatted-date-time>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="bl-erp-undecided">미정</span>
+                                    </template>
+                                </span>
+                            </div>
+                            <template lwc:if={view.delayReason}>
+                                <div class="bl-meta-item bl-meta-item_erp-reason">
+                                    <span class="bl-meta-label">ERP 사유</span>
+                                    <span class="bl-meta-value">{view.delayReason}</span>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- ERP 신호 -->
+                <template lwc:if={hasSignals}>
+                    <div class="bl-section slds-m-top_medium">
+                        <h4 class="slds-text-title_caps slds-m-bottom_x-small">ERP 신호</h4>
+                        <ul class="bl-list">
+                            <template for:each={lastSignals} for:item="s">
+                                <li key={s}>{s}</li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <!-- 액션 -->
+                <template lwc:if={showNotifyAction}>
+                    <div class="slds-m-top_medium">
+                        <lightning-button
+                            label="사전 통보 메일"
+                            variant="destructive"
+                            onclick={handleNotify}>
+                        </lightning-button>
+                    </div>
+                </template>
+
+                <template lwc:if={isUnsynced}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                        ※ [ERP 동기화] 버튼을 눌러 ERP 측 위험 신호를 가져오세요.
+                    </p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

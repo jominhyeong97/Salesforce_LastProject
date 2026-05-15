@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>AE 콕피트 (5카드)</masterLabel>
+    <description>한도정밀 AE 통합 콕피트 — 신규 RFQ + 우선 Lead + 발송 견적 + 위험 주문 + 미수금 5카드 (Day 9 #6, 시연 §1).</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+</LightningComponentBundle>

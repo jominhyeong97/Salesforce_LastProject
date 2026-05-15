@@ -1,0 +1,135 @@
+/* ============== Hero (Dropzone) — mobile-first ============== */
+.bc-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0.75rem;
+    border: 2px dashed #c9c9c9;
+    border-radius: 0.25rem;
+    background: #ffffff;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.bc-dropzone_active {
+    border-color: #0176d3;
+    background: #ecf5fc;
+}
+.bc-hero__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 0.5rem;
+    background: #0176d3;
+    border-radius: 50%;
+}
+.bc-hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 320px;
+    margin-top: 0.25rem;
+}
+.bc-hero__btn {
+    width: 100%;
+}
+.bc-hero__hint {
+    font-size: 0.75rem;
+}
+
+/* desktop: side-by-side buttons + larger hero */
+@media (min-width: 768px) {
+    .bc-dropzone {
+        padding: 1.5rem 1rem;
+    }
+    .bc-hero__icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin-bottom: 0.75rem;
+    }
+    .bc-hero__actions {
+        flex-direction: row;
+        max-width: 420px;
+    }
+}
+
+/* ============== Queue (compact) ============== */
+.bc-job-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+.bc-job-item {
+    background: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    margin-bottom: 0.375rem;
+    animation: bc-fade-in 0.2s ease;
+}
+.bc-job-item_active   { border-left: 3px solid #0176d3; }
+.bc-job-item_success  { border-left: 3px solid #2e844a; }
+.bc-job-item_failed   { border-left: 3px solid #ba0517; }
+
+.bc-filename {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 0.8125rem;
+}
+
+.bc-job__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+.bc-job__btn {
+    flex: 0 0 auto;
+}
+
+/* ============== Empty state (compact) ============== */
+.bc-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem 1rem;
+}
+.bc-empty__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+}
+
+/* ============== Thumbnail (compact) ============== */
+.bc-thumb {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+.bc-thumb__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bc-thumb__placeholder {
+    color: #706e6b;
+}
+
+@keyframes bc-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

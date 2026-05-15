@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AI_Draft_Confidence__c</fullName>
+    <description>AI 초안 신뢰도 0.00~1.00. FR-QUOTE-001. 0.6 미만은 경고.</description>
+    <label>AI 초안 신뢰도</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

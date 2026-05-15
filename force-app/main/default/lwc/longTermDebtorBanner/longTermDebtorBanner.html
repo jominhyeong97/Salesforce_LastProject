@@ -1,0 +1,19 @@
+<template>
+    <template lwc:if={isDebtor}>
+        <div class="bl-banner">
+            <div class="bl-icon">🚨</div>
+            <div class="bl-msg">
+                <div class="bl-title">장기 미수금 거래처</div>
+                <div class="bl-detail">
+                    {accountName} · 총 미수금 <strong class="bl-amount">{totalAR}</strong>
+                    <template lwc:if={overLimit}>
+                        · 신용한도 {creditLimit} 초과 <strong class="bl-over">+{exceedAmount}</strong>
+                    </template>
+                </div>
+            </div>
+            <div class="bl-action">
+                <span class="bl-cta">신규 거래 신중 검토</span>
+            </div>
+        </div>
+    </template>
+</template>

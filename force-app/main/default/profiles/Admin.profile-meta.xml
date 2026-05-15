@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+    <custom>false</custom>
+
+    <!-- Account 6 -->
+    <fieldPermissions><editable>true</editable><field>Account.Business_Number__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Account.CEO_Name__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Account.Total_AR__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Account.External_Credit_Score__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Account.Credit_Limit__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Account.Long_Term_Debtor__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- Lead 3 -->
+    <fieldPermissions><editable>true</editable><field>Lead.Source_Channel__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Lead.Lead_Score__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Lead.RFQ_Spec_JSON__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- Quote 5 -->
+    <fieldPermissions><editable>true</editable><field>Quote.AI_Draft_Confidence__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Quote.AE_Edit_Count__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Quote.Sent_Date__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Quote.Last_Opened_At__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Quote.Last_Clicked_At__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- QuoteLineItem 2 (Discount_Percent__c is Formula) -->
+    <fieldPermissions><editable>true</editable><field>QuoteLineItem.Discount_Amount__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>false</editable><field>QuoteLineItem.Discount_Percent__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- Order 7 (Outstanding_Amount__c is Formula) -->
+    <fieldPermissions><editable>true</editable><field>Order.Production_Status__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Production_Start_Date__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Production_End_Date__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Delivery_Risk_Score__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Shipped_Date__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Total_Paid_Amount__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>false</editable><field>Order.Outstanding_Amount__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- Contact 2 -->
+    <fieldPermissions><editable>true</editable><field>Contact.Korean_Title__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Contact.Korean_Department__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- EmailMessage 1 -->
+    <fieldPermissions><editable>true</editable><field>EmailMessage.Intent__c</field><readable>true</readable></fieldPermissions>
+
+    <!-- Payment__c: Required 4(Order__c/Paid_Date__c/Paid_Amount__c/Status__c)는 Profile FLS 명시 금지 — Memo__c만 -->
+    <fieldPermissions><editable>true</editable><field>Payment__c.Memo__c</field><readable>true</readable></fieldPermissions>
+</Profile>

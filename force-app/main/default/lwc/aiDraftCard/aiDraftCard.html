@@ -1,0 +1,68 @@
+<template>
+    <lightning-card title="AI 견적 초안" icon-name="utility:einstein">
+        <div class="slds-p-around_medium">
+
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-m-vertical_medium">
+                    <lightning-spinner alternative-text="AI 견적 생성 중..." size="medium"></lightning-spinner>
+                </div>
+                <p class="slds-text-align_center slds-text-color_weak">RFQ 사양 분석 + 카탈로그 매칭 중...</p>
+            </template>
+
+            <template lwc:if={hasError}>
+                <div class="bl-result bl-result_error slds-m-bottom_small">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">생성 실패</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">{errorMessage}</p>
+                    <p class="slds-m-top_small">
+                        <lightning-button label="다시 시도" onclick={handleReset}></lightning-button>
+                    </p>
+                </div>
+            </template>
+
+            <template lwc:if={hasResult}>
+                <div class="bl-result bl-result_success slds-m-bottom_small">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:success" size="small" variant="success"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">AI 견적 초안 생성 완료</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">
+                        견적: <strong>{result.quoteName}</strong>
+                    </p>
+                    <ul class="bl-detail slds-m-top_small">
+                        <li><span class="bl-label">매칭 제품</span> <strong>{result.matchedProductName}</strong></li>
+                        <li>
+                            <span class="bl-label">AI 신뢰도</span>
+                            <span class={confidenceClass}>{confidencePct}</span>
+                        </li>
+                        <li><span class="bl-label">매칭 사유</span> <span>{result.matchReason}</span></li>
+                    </ul>
+                    <div class="slds-m-top_medium">
+                        <lightning-button label="Quote Builder로 이동" variant="brand" onclick={handleNavigate}></lightning-button>
+                        <lightning-button label="다시 생성" onclick={handleReset} class="slds-m-left_x-small"></lightning-button>
+                    </div>
+                </div>
+            </template>
+
+            <template lwc:if={showInitial}>
+                <p class="slds-text-body_regular slds-m-bottom_medium">
+                    Opportunity의 RFQ 사양을 분석해 카탈로그에서 가장 적합한 제품을 매칭하고,
+                    초안 견적서(Quote + 라인)를 자동으로 생성합니다.
+                </p>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_medium">
+                    · 사양 입력 출처: Opportunity Description (Lead 인입 시 RFQ_Spec_JSON 자동 복사)<br/>
+                    · 매칭 결과는 신뢰도와 함께 Quote.AI_Draft_Confidence__c에 기록<br/>
+                    · 생성 후 AE는 Quote Builder에서 라인/할인을 인라인 편집
+                </p>
+                <lightning-button
+                    label="AI 견적 초안 생성"
+                    variant="brand"
+                    icon-name="utility:einstein"
+                    onclick={handleGenerate}>
+                </lightning-button>
+            </template>
+        </div>
+    </lightning-card>
+</template>

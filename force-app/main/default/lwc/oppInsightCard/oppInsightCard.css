@@ -1,0 +1,145 @@
+:host {
+    --brand: #1B96FF;
+    --brand-dark: #0176D3;
+    --success: #2E844A;
+    --warning: #FE9339;
+    --error: #BA0517;
+    --gray-2: #F3F3F3;
+    --gray-3: #DDDBDA;
+    --gray-4: #706E6B;
+    --gray-5: #181818;
+    --r: 4px;
+}
+
+/* ── 점수 카드 ── */
+.bl-score-card {
+    border: 1px solid var(--gray-3);
+    border-radius: var(--r);
+    background: white;
+    overflow: hidden;
+}
+.bl-score-card::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: var(--gray-4);
+}
+.bl-score-card_high::before { background: var(--success); }
+.bl-score-card_mid::before  { background: var(--warning); }
+.bl-score-card_low::before  { background: var(--error); }
+
+.bl-score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.85rem 1rem 0.5rem;
+}
+.bl-score-label {
+    font-size: 0.78rem;
+    color: var(--gray-4);
+    letter-spacing: 0.03em;
+}
+.bl-score-value {
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--gray-5);
+    line-height: 1.1;
+}
+
+.bl-score-bar {
+    height: 6px;
+    background: var(--gray-2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 1rem 0.7rem;
+}
+.bl-score-bar-fill {
+    height: 100%;
+    background: var(--brand);
+    transition: width 0.5s ease;
+}
+.bl-score-card_high .bl-score-bar-fill { background: var(--success); }
+.bl-score-card_mid  .bl-score-bar-fill { background: var(--warning); }
+.bl-score-card_low  .bl-score-bar-fill { background: var(--error); }
+
+.bl-score-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0 1rem 0.85rem;
+}
+.bl-bd-item {
+    background: var(--gray-2);
+    color: var(--gray-5);
+    border: 1px solid var(--gray-3);
+    padding: 0.1rem 0.55rem;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+.bl-bd-label { color: var(--gray-4); margin-right: 0.25rem; }
+.bl-bd-value { font-weight: 600; color: var(--gray-5); }
+
+/* ── AI 요약 영역 ── */
+.bl-summary {
+    padding: 0.7rem 0.85rem;
+    background: var(--gray-2);
+    border-radius: var(--r);
+    border-left: 3px solid var(--brand);
+}
+
+.bl-badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid;
+}
+.bl-badge_ai       { background: #EEF6FE; color: var(--brand-dark); border-color: #C9E6FB; }
+.bl-badge_fallback { background: var(--gray-2); color: var(--gray-5); border-color: var(--gray-3); }
+
+/* ── 위험·액션 리스트 ── */
+.bl-section { padding: 0 0.25rem; }
+.bl-list {
+    list-style: disc;
+    padding-left: 1.4rem;
+    margin: 0;
+}
+.bl-list_ordered { list-style: decimal; }
+.bl-list li {
+    padding: 0.2rem 0;
+    font-size: 0.85rem;
+    color: var(--gray-5);
+}
+
+/* ── 로딩 오버레이 ── */
+.bl-insight-container { position: relative; min-height: 160px; }
+.bl-insight-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    border-radius: var(--r);
+}
+.bl-insight-loading__box {
+    background: white;
+    padding: 1.1rem 1.5rem;
+    border-radius: var(--r);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border: 1px solid var(--gray-3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 240px;
+}
+.bl-insight-loading__text {
+    color: var(--gray-5);
+    font-weight: 500;
+    font-size: 0.88rem;
+    text-align: center;
+}

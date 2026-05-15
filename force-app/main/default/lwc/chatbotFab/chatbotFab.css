@@ -1,0 +1,126 @@
+:host {
+    position: static;
+}
+
+/* ─── FAB (둥둥 떠있는 동그라미) — 우하단 ─── */
+.fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #635bff 0%, #8a82ff 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(99, 91, 255, 0.45),
+                0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: float-bounce 3s ease-in-out infinite;
+}
+.fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 26px rgba(99, 91, 255, 0.55);
+}
+.fab--open {
+    animation: none;
+    background: linear-gradient(135deg, #4a4ac2 0%, #635bff 100%);
+}
+.fab__icon {
+    font-size: 1.8rem;
+    color: white;
+    line-height: 1;
+}
+
+@keyframes float-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* ─── 채팅 패널 ─── */
+.chat-panel {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 460px;
+    height: 600px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22),
+                0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 9998;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: panel-pop 0.22s ease-out;
+}
+
+@keyframes panel-pop {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ─── chat-panel 헤더 (보라 그라데이션 + 닫기) ─── */
+.chat-panel__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: linear-gradient(90deg, #635bff 0%, #8a82ff 100%);
+    color: white;
+}
+.chat-panel__icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+.chat-panel__title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.chat-panel__sub {
+    font-size: 0.72rem;
+    opacity: 0.85;
+    flex: 1 1 auto;
+    margin-left: 0.2rem;
+}
+.chat-panel__close {
+    flex: 0 0 auto;
+    background: rgba(255, 255, 255, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.15s ease, transform 0.15s ease;
+    padding: 0;
+}
+.chat-panel__close:hover {
+    background: rgba(255, 255, 255, 0.38);
+    transform: scale(1.08);
+}
+.chat-panel__close:active {
+    transform: scale(0.96);
+}
+
+/* ─── chat-panel 본문 (inputBar 임베드) ─── */
+.chat-panel__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    background: #f6f6fb;
+}
+.chat-panel__body c-agentforce-input-bar {
+    display: block;
+    height: 100%;
+}

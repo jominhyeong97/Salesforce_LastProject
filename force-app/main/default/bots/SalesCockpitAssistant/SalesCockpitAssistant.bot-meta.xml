@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+    <botUser>jumbo0303@daum.net</botUser>
+    <description>AE 김민수의 콕피트 자연어 도우미 — 오늘 우선순위·위험 Order·고객사 요약·견적 follow-up 메일 초안. Employee Agent (한도정밀 내부 영업 워크스페이스).</description>
+    <label>한도세일즈 도우미</label>
+    <logPrivateConversationData>false</logPrivateConversationData>
+    <richContentEnabled>false</richContentEnabled>
+    <type>EinsteinServiceAgent</type>
+</Bot>

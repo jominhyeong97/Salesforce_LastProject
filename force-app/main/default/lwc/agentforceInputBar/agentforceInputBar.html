@@ -1,0 +1,76 @@
+<template>
+    <div class="chatbot">
+        <template lwc:if={showHeader}>
+            <header class="chatbot__header">
+                <span class="bot-icon">🤖</span>
+                <span class="bot-title">세일즈 도우미</span>
+                <span class="bot-sub">한도정밀 영업 어시스턴트</span>
+            </header>
+        </template>
+
+            <div class="chatbot__log">
+                <template lwc:if={hasMessages}>
+                    <template for:each={messages} for:item="m">
+                        <div key={m.id} class={m.cssClass}>
+                            <div class="avatar">{m.avatar}</div>
+                            <div class="bubble">
+                                <template lwc:if={m.actionLabel}>
+                                    <div class="bubble__head">
+                                        <span class="action-badge">{m.actionLabel}</span>
+                                        <template lwc:if={m.urgency}>
+                                            <span class="urgency-badge">긴급도: {m.urgency}</span>
+                                        </template>
+                                    </div>
+                                </template>
+                                <div class="bubble__body">
+                                    <template for:each={m.segments} for:item="s">
+                                        <template lwc:if={s.recordId}>
+                                            <a key={s.key} href="javascript:void(0)" data-id={s.recordId} onclick={handleNav} class="rec-link">{s.text}</a>
+                                        </template>
+                                        <template lwc:else>
+                                            <span key={s.key}>{s.text}</span>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template lwc:else>
+                    <div class="chatbot__empty">
+                        💬 무엇이든 물어보세요. 예: <em>"오늘 우선순위"</em>, <em>"현대모비스 미수금"</em>, <em>"납기 위험 주문"</em>
+                    </div>
+                </template>
+
+                <template lwc:if={isLoading}>
+                    <div class="msg msg-ai msg-typing">
+                        <div class="avatar">🤖</div>
+                        <div class="bubble">
+                            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                            <span class="typing-text">{labels.aiLoading}</span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="chatbot__input">
+                <lightning-input
+                    type="text"
+                    variant="label-hidden"
+                    placeholder="예: 오늘 우선순위, 현대모비스 미수금, 납기 위험 주문…"
+                    value={utterance}
+                    onchange={handleInput}
+                    onkeydown={handleKey}
+                    disabled={isLoading}>
+                </lightning-input>
+                <lightning-button-icon
+                    icon-name="utility:send"
+                    variant="brand"
+                    alternative-text="보내기"
+                    title="보내기"
+                    onclick={handleAsk}
+                    disabled={isLoading}>
+                </lightning-button-icon>
+        </div>
+    </div>
+</template>

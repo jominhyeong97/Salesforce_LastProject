@@ -1,0 +1,137 @@
+<template>
+    <lightning-card title="사업자등록증 OCR" icon-name="standard:account">
+        <div class="slds-p-around_medium">
+
+            <!-- Loading -->
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-m-vertical_large">
+                    <lightning-spinner alternative-text={labels.aiLoading} size="medium"></lightning-spinner>
+                </div>
+                <p class="slds-text-align_center slds-text-color_weak">{labels.aiLoading}</p>
+            </template>
+
+            <!-- Success -->
+            <template lwc:if={isSuccess}>
+                <div class="bl-result bl-result_success slds-m-bottom_medium">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:success" size="small" variant="success"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">처리 완료</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">
+                        사업자등록증 정보가 Account에 반영되었습니다.
+                    </p>
+                    <ul class="bl-field-list slds-m-top_small">
+                        <template for:each={enrichedList} for:item="f">
+                            <li key={f.key} class="bl-field-list__item">
+                                <lightning-icon icon-name="utility:check" size="xx-small" variant="success"></lightning-icon>
+                                <span class="slds-m-left_x-small">{f.label}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+
+            <!-- Partial -->
+            <template lwc:if={isPartial}>
+                <div class="bl-result bl-result_warning slds-m-bottom_medium">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:warning" size="small" variant="warning"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">부분 성공</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">{errorMessage}</p>
+
+                    <div class="slds-m-top_small">
+                        <span class="slds-text-body_small slds-text-color_weak">반영된 필드: </span>
+                        <template for:each={enrichedList} for:item="f">
+                            <span key={f.key} class="bl-chip bl-chip_ok">{f.label}</span>
+                        </template>
+                    </div>
+                    <template lwc:if={hasPartialList}>
+                        <div class="slds-m-top_x-small">
+                            <span class="slds-text-body_small slds-text-color_weak">미추출 필드: </span>
+                            <template for:each={partialList} for:item="f">
+                                <span key={f.key} class="bl-chip bl-chip_warn">{f.label}</span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Extract Empty -->
+            <template lwc:if={isExtractEmpty}>
+                <div class="bl-result bl-result_warning slds-m-bottom_medium">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:warning" size="small" variant="warning"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">OCR 인식 실패</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">
+                        사업자등록증 내용을 인식하지 못했습니다.
+                    </p>
+                    <ul class="bl-tips-list slds-m-top_small slds-text-body_small">
+                        <li>이미지가 흐리거나 어둡지 않은지</li>
+                        <li>사업자등록증 전체가 프레임에 들어왔는지</li>
+                        <li>정면에서 촬영했는지</li>
+                    </ul>
+                    <p class="slds-m-top_small">
+                        <button class="slds-button slds-button_neutral" onclick={handleRetry}>다시 시도</button>
+                    </p>
+                </div>
+            </template>
+
+            <!-- Error -->
+            <template lwc:if={isError}>
+                <div class="bl-result bl-result_error slds-m-bottom_medium">
+                    <div class="bl-result__title">
+                        <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                        <span class="slds-text-heading_small slds-m-left_x-small">오류 발생</span>
+                    </div>
+                    <p class="slds-text-body_regular slds-m-top_x-small">{errorMessage}</p>
+                    <p class="slds-m-top_small">
+                        <button class="slds-button slds-button_neutral" onclick={handleRetry}>다시 시도</button>
+                    </p>
+                </div>
+            </template>
+
+            <!-- Upload form -->
+            <template lwc:if={showUploadForm}>
+                <div class="upload-section">
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label">
+                            <abbr class="slds-required" title="required">*</abbr> 사업자등록증 이미지
+                        </label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-file-selector slds-file-selector_files">
+                                <div class={dragOverClass}
+                                     ondrop={handleFileDrop}
+                                     ondragover={handleDragOver}
+                                     ondragleave={handleDragLeave}>
+                                    <input type="file"
+                                           class="slds-file-selector__input"
+                                           accept=".jpg,.jpeg,.png"
+                                           onchange={handleFileSelect}
+                                           id="fileInput">
+                                    <label class="slds-file-selector__body" for="fileInput">
+                                        <span class="slds-file-selector__button slds-button slds-button_neutral">
+                                            파일 선택
+                                        </span>
+                                        <span class="slds-file-selector__text slds-text-body_regular">
+                                            또는 파일을 여기로 드래그하세요
+                                        </span>
+                                        <span class="slds-file-selector__text-alternative slds-text-body_small">
+                                            jpg, jpeg, png (최대 5MB)
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <template lwc:if={errorMessage}>
+                            <p class="slds-text-color_destructive slds-m-top_x-small slds-text-body_small">
+                                {errorMessage}
+                            </p>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,61 @@
+.bl-banner {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #ea001e 0%, #c62828 100%);
+    color: #fff;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(234,0,30,0.25);
+    animation: bl-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes bl-pulse {
+    0%   { box-shadow: 0 2px 4px rgba(234,0,30,0.25); }
+    50%  { box-shadow: 0 2px 12px rgba(234,0,30,0.5); }
+    100% { box-shadow: 0 2px 4px rgba(234,0,30,0.25); }
+}
+
+.bl-icon {
+    font-size: 1.6rem;
+    margin-right: 0.85rem;
+}
+
+.bl-msg {
+    flex: 1;
+    min-width: 0;
+}
+
+.bl-title {
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+}
+
+.bl-detail {
+    font-size: 0.85rem;
+    margin-top: 0.15rem;
+    opacity: 0.95;
+}
+
+.bl-amount {
+    font-size: 0.95rem;
+    color: #fff5d9;
+}
+
+.bl-over {
+    color: #ffe2a0;
+}
+
+.bl-action {
+    margin-left: 0.75rem;
+}
+
+.bl-cta {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</activeVersionIdentifier>
+    <description>Quote follow-up 메일 한국어 초안 — 정중체, 제목+본문 JSON 반환. AE 가 검토 후 발송.</description>
+    <developerName>FollowupDraft</developerName>
+    <masterLabel>Followup Draft</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>당신은 한국 B2B 영업의 follow-up 메일 작성 전문가입니다.
+다음 견적 정보를 바탕으로 정중하고 자연스러운 follow-up 메일 1통을 한국어로 작성하세요.
+
+== 견적 정보 ==
+- 견적 번호: {!$Input:QuoteRecord.QuoteNumber}
+- 견적 단계: {!$Input:QuoteRecord.Status}
+- 발송일: {!$Input:QuoteRecord.Sent_Date__c}
+- 견적 총액: {!$Input:QuoteRecord.GrandTotal}
+- 거래명: {!$Input:QuoteRecord.Opportunity.Name}
+- 고객사: {!$Input:QuoteRecord.Opportunity.Account.Name}
+- 담당자: {!$Input:QuoteRecord.Contact.Name}
+
+== 추가 컨텍스트 (있으면 반영) ==
+{!$Input:AdditionalContext}
+
+== 출력 규칙 ==
+1. subject: 견적 번호와 고객사명을 포함한 한 줄 제목 (40자 이내).
+2. body: 담당자 호칭 → 인사 → 견적 회신 부탁 → 추가 컨텍스트 반영(있으면) → 마무리 인사 → 서명. 줄바꿈(\n) 포함, 정중체.
+3. 발신자 서명은 &quot;한도정밀 영업팀&quot; 으로 고정.
+4. 가격·할인·납기 등을 임의로 새로 제시하지 말 것. AE 의 추가 컨텍스트만 인용.
+5. 마크다운 코드 펜스(```), 부가 설명, JSON 외 텍스트 절대 금지. JSON 객체 하나만 출력.
+
+== Output JSON Schema (정확히 이 형태) ==
+{&quot;subject&quot;:&quot;&quot;,&quot;body&quot;:&quot;&quot;}
+</content>
+        <inputs>
+            <apiName>QuoteRecord</apiName>
+            <definition>SOBJECT://Quote</definition>
+            <masterLabel>QuoteRecord</masterLabel>
+            <referenceName>Input:QuoteRecord</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>AdditionalContext</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>AdditionalContext</masterLabel>
+            <referenceName>Input:AdditionalContext</referenceName>
+            <required>false</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT41Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>Kq6SQoRuvfk3rsaQ8nA6hl3/dNtvx3/G4/dJmwqyuV0=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

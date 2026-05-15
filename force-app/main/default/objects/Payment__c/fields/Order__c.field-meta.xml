@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Order__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>입금 대상 주문 (Order). 1 Order : N Payments.</description>
+    <label>주문</label>
+    <referenceTo>Order</referenceTo>
+    <relationshipLabel>입금 내역</relationshipLabel>
+    <relationshipName>Payments</relationshipName>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

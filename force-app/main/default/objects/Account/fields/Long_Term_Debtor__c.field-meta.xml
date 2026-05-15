@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Long_Term_Debtor__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>180일+ 미수금 거래처 플래그. FR-AR-002.</description>
+    <label>장기미수금 거래처</label>
+    <trackHistory>true</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

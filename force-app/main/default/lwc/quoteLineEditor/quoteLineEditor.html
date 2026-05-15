@@ -1,0 +1,36 @@
+<template>
+    <div class={rowClass}>
+        <div class="bl-line-grid">
+            <div class="bl-cell bl-cell_product">
+                <strong class="slds-text-body_regular">{line.productName}</strong>
+                <div class="slds-text-color_weak slds-text-body_small">{line.productCode}</div>
+            </div>
+            <div class="bl-cell">
+                <lightning-input type="number" label="수량" value={qty} step="1" onchange={handleQtyChange}></lightning-input>
+            </div>
+            <div class="bl-cell">
+                <lightning-input type="number" label="단가 (₩)" value={price} step="1" onchange={handlePriceChange}></lightning-input>
+            </div>
+            <div class="bl-cell">
+                <lightning-input type="number" label="할인 금액 (₩)" value={discount} step="1" onchange={handleDiscountChange}></lightning-input>
+            </div>
+            <div class="bl-cell bl-cell_compute">
+                <span class="bl-label">할인율</span>
+                <strong>{previewDiscountPercent}%</strong>
+            </div>
+            <div class="bl-cell bl-cell_compute">
+                <span class="bl-label">라인 합계</span>
+                <strong>
+                    <lightning-formatted-number value={previewNet} format-style="currency" currency-code="KRW"></lightning-formatted-number>
+                </strong>
+            </div>
+            <div class="bl-cell bl-cell_actions">
+                <template lwc:if={isModified}>
+                    <button class="slds-button slds-button_brand" onclick={handleSave}>저장</button>
+                    <button class="slds-button slds-button_neutral" onclick={handleCancel}>취소</button>
+                </template>
+                <button class="slds-button slds-button_destructive-text" onclick={handleDelete}>삭제</button>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>AE 의 오늘 우선순위 통합 목록을 5 카테고리(신규 RFQ Lead / 우선 Lead / 발송 Quote / 위험 Order / 미수금)로 반환합니다. 사용자가 "오늘 할 일", "급한 것부터", "내 우선순위" 같은 자연어로 물을 때 사용.</description>
+    <invocationTarget>GetTodayPriorityListAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Get Today Priority List</masterLabel>
+</GenAiFunction>

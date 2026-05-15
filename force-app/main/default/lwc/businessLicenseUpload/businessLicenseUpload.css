@@ -1,0 +1,153 @@
+/* Root container — width 기반 반응형 (관련됨 탭 등 좁은 컨텍스트 대응) */
+:host {
+    display: block;
+    container-type: inline-size;
+}
+
+.upload-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Dropzone — padding/폰트 반응형 */
+.slds-file-selector__dropzone {
+    border: 2px dashed #c0c0c0;
+    border-radius: 4px;
+    padding: clamp(0.75rem, 4cqw, 2rem);
+    text-align: center;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+.slds-file-selector__dropzone:hover {
+    border-color: #0070d2;
+    background-color: #f3f5f7;
+}
+
+.slds-file-selector__dropzone.slds-has-drag-over {
+    border-color: #0070d2;
+    background-color: #e6f2ff;
+    box-shadow: 0 0 0 3px rgba(0, 112, 210, 0.15);
+}
+
+.slds-file-selector__input { display: none; }
+.slds-file-selector__button { margin-bottom: 0.5rem; }
+
+.slds-file-selector__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.slds-file-selector__text,
+.slds-file-selector__text-alternative {
+    display: block;
+    margin-top: 0.5rem;
+    color: #565656;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+/* 결과 박스 — 성공/부분/실패 공통 */
+.bl-result {
+    padding: clamp(0.75rem, 3cqw, 1rem) clamp(0.75rem, 3cqw, 1.25rem);
+    border-radius: 4px;
+    border-left: 4px solid;
+    background-color: #fafafa;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+.bl-result__title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.bl-result__title > span {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.bl-result_success {
+    border-left-color: #4bca81;
+    background-color: #f0fff4;
+}
+
+.bl-result_warning {
+    border-left-color: #ffb75d;
+    background-color: #fff8ee;
+}
+
+.bl-result_error {
+    border-left-color: #ea001e;
+    background-color: #fff1f1;
+}
+
+/* ✓ 필드 리스트 */
+.bl-field-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.bl-field-list__item {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0;
+    font-size: 0.9375rem;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+/* 안내 팁 리스트 */
+.bl-tips-list {
+    list-style: disc;
+    padding-left: 1.5rem;
+    color: #565656;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+.bl-tips-list li {
+    padding: 0.125rem 0;
+}
+
+/* 칩 — 좁은 폭에서도 줄바꿈 정상 */
+.bl-chip {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    margin: 0.15rem 0.25rem 0.15rem 0;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.bl-chip_ok   { background: #e8f5e9; border-color: #66bb6a; color: #1b5e20; }
+.bl-chip_warn { background: #fff3e0; border-color: #ffa726; color: #6d4c00; }
+
+/* 좁은 컨테이너(<= 320px) — 안내 텍스트 더 컴팩트 */
+@container (max-width: 320px) {
+    .slds-file-selector__body {
+        font-size: 0.8125rem;
+    }
+    .bl-field-list__item {
+        font-size: 0.8125rem;
+    }
+    .bl-result {
+        font-size: 0.875rem;
+    }
+}
