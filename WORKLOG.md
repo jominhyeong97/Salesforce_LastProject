@@ -378,3 +378,8 @@
 - `11:55 | Flow 단독 배포 | Deploy 0AfdM00000aUWk6SAG ✅ (Flow id 301dM00003lxDSrQAM Active).`
 - `12:00 | 함정 발견 #2 | Standard Button Override UI 가 Visualforce/Lightning 구성요소만 받음 — Flow 라디오 옵션 자체 없음. metadata API와 동일 한계.`
 - `12:05~12:15 | Aura wrapper c:NewLeadKrFlow | aura/NewLeadKrFlow/ 번들 (cmp + cmp-meta + controller.js). lightning:actionOverride 구현, <lightning:flow> 로 New_Lead_KR 호출, FINISHED 시 /lightning/o/Lead/list 네비. 1차 deploy 함정 — onstatuschange를 aura:handler 로 잡으려 시도 → "No EVENT named lightning:flowStatusChange". fix: <lightning:flow> attribute 핸들러로 바인드. Deploy 0AbdM000005sveLSAQ ✅. 후속(사용자 1회 수동): Setup → Lead → Buttons, Links, and Actions → New → Edit → Lightning Experience 재정의 → "Lightning 구성 요소" → c:NewLeadKrFlow → Save.`
+
+## 2026-05-19 (월) — 포트폴리오 정비
+
+- [Decision] README 발표본 수준 풀 포트폴리오로 재작성 — 페르소나·As-is/To-be·기능 5건 상세(코드 포함)·회고 11개 섹션. 메타데이터 수치 정정(Apex 161→80, Trigger 12→6, LWC 72→18, 객체 37→1 커스텀).
+- [Decision] 화면증적 추가 — docs/screenshots/ PNG 4장(단계 게이트), docs/videos/ MP4 10건(~160MB). 공백·한글 없는 ASCII 파일명으로 정리. GitHub push `b74e073..6881e49`.
