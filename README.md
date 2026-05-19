@@ -60,16 +60,11 @@
 
 주요 기능의 핵심 장면은 [7. 주요 기능 5건](#7-주요-기능-5건) 섹션에 **GIF로 임베드**되어 README에서 클릭 없이 바로 재생됩니다.
 
-**전체 길이 영상**
+▶ **[전체 데모 A–Z 영상 (Google Drive · 4:28)](https://drive.google.com/file/d/1S6kdsEs4VCQBeuwVqdjUp3ArXxu5UNIY/view)** — Lead 발굴부터 수금 알림까지 L2C 5단계 통합 시나리오
 
-| 영상 | 길이 | 내용 |
-| --- | --- | --- |
-| ▶ [전체 데모 A–Z (Google Drive)](https://drive.google.com/file/d/1Eqffs27RxLqPWeDNJC7r99B1QZvMotRw/view) | 4:28 | Lead 발굴부터 수금 알림까지 L2C 5단계 통합 시나리오 |
-| ▶ [기본 프로세스 1–7](docs/videos/process-overview.mp4) | 4:19 | 단계별 핵심 동작 개요 — 저장소 내 원본(MP4) |
+> 핵심 장면은 GIF로 README에 인라인 임베드됩니다. 일부 GIF(견적 라인·재견적)는 분량 조절을 위해 약간 빠르게 재생됩니다. 단계별 원본 영상(MP4)은 [`docs/videos/`](docs/videos/)에 포함되어 있습니다.
 
-> 단계별 원본 영상(MP4 10건)은 [`docs/videos/`](docs/videos/)에 포함되어 있습니다. GitHub 웹에서는 용량이 큰 MP4가 미리보기 대신 다운로드로 표시될 수 있어, 핵심 장면은 GIF로 별도 제공합니다. 일부 GIF(견적 라인·재견적)는 분량 조절을 위해 약간 빠르게 재생됩니다.
-
-📊 발표 슬라이드 전체본: [`한도정밀 L2C 발표_최종본.html`](한도정밀%20L2C%20발표_최종본.html) (29페이지)
+📊 **발표 슬라이드 전체본 (29페이지)** — [GitHub Pages에서 보기](https://jominhyeong97.github.io/Salesforce_LastProject/) · 저장소 [`index.html`](index.html)
 
 ---
 
@@ -182,7 +177,7 @@ ConnectApi.EinsteinLLM.generateMessagesForPromptTemplate(
 
 > **`stripCodeFences` 헬퍼** — LLM이 응답을 ` ```json … ``` ` 코드 펜스로 감싸는 경우가 잦아, 모든 LLM 응답 경로에 정제 헬퍼 통과를 의무화했습니다.
 
-**시연** — [리드 → 견적 전체 영상 (1:38)](docs/videos/01-lead-to-quote.mp4) · 저장소 내 원본(MP4)
+**시연** — 사업자등록증 OCR 동작은 [전체 데모 A–Z 영상](https://drive.google.com/file/d/1S6kdsEs4VCQBeuwVqdjUp3ArXxu5UNIY/view)에 포함됩니다.
 
 ---
 

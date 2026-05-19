@@ -61,9 +61,9 @@ probe.apex
 # Reference-only / superpowers vendoring (kept locally, not published)
 docs/superpowers/
 
-# Generated / non-source presentation artifacts
+# Generated / non-source build artifacts
 docs/design-preview.html
 *.pdf
-image.png
 pngwing.com.png
-한도정밀 L2C 발표_최종본.html
+
+# Note: index.html (발표 슬라이드) + image.png are tracked for GitHub Pages
