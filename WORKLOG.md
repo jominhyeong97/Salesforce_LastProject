@@ -382,4 +382,5 @@
 ## 2026-05-19 (월) — 포트폴리오 정비
 
 - [Decision] README 발표본 수준 풀 포트폴리오로 재작성 — 페르소나·As-is/To-be·기능 5건 상세(코드 포함)·회고 11개 섹션. 메타데이터 수치 정정(Apex 161→80, Trigger 12→6, LWC 72→18, 객체 37→1 커스텀).
-- [Decision] 화면증적 추가 — docs/screenshots/ PNG 4장(단계 게이트), docs/videos/ MP4 10건(~160MB). 공백·한글 없는 ASCII 파일명으로 정리. GitHub push `b74e073..6881e49`.
+- [Decision] 화면증적 추가 — docs/screenshots/ PNG 4장(단계 게이트), docs/videos/ MP4 10건(~160MB). 공백·한글 없는 ASCII 파일명으로 정리.
+- [Decision] 시연 GIF 7건(docs/gifs/) 인라인 임베드, 발표본을 index.html로 공개(GitHub Pages), 발표본 Drive 링크 11건 전부 개인 계정 사본으로 교체.
