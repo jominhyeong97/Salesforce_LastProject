@@ -26,7 +26,7 @@
 ## 목차
 
 1. [프로젝트 개요](#1-프로젝트-개요)
-2. [데모 — 시연 영상](#2-데모--시연-영상)
+2. [데모](#2-데모)
 3. [대상 사용자 — AE 김민수](#3-대상-사용자--ae-김민수)
 4. [As-is / To-be 매트릭스](#4-as-is--to-be-매트릭스)
 5. [핵심 가치 4가지](#5-핵심-가치-4가지)
@@ -56,29 +56,18 @@
 
 ---
 
-## 2. 데모 — 시연 영상
+## 2. 데모
 
-화면증적 영상은 [`docs/videos/`](docs/videos/)에 포함되어 있습니다. GitHub에서 링크를 클릭하면 내장 플레이어로 재생됩니다.
+주요 기능의 핵심 장면은 [7. 주요 기능 5건](#7-주요-기능-5건) 섹션에 **GIF로 임베드**되어 README에서 클릭 없이 바로 재생됩니다.
 
-### 전체 흐름
+**전체 길이 영상**
 
 | 영상 | 길이 | 내용 |
 | --- | --- | --- |
-| [▶ 전체 데모 (A–Z)](docs/videos/full-demo.mp4) | 4:28 | Lead 발굴부터 수금 알림까지 L2C 5단계 통합 시나리오 |
-| [▶ 기본 프로세스 1–7](docs/videos/process-overview.mp4) | 4:19 | 단계별 핵심 동작을 순서대로 훑는 개요 영상 |
+| ▶ [전체 데모 A–Z (Google Drive)](https://drive.google.com/file/d/1Eqffs27RxLqPWeDNJC7r99B1QZvMotRw/view) | 4:28 | Lead 발굴부터 수금 알림까지 L2C 5단계 통합 시나리오 |
+| ▶ [기본 프로세스 1–7](docs/videos/process-overview.mp4) | 4:19 | 단계별 핵심 동작 개요 — 저장소 내 원본(MP4) |
 
-### 단계별 시연
-
-| # | 영상 | 길이 | 대응 기능 |
-| --- | --- | --- | --- |
-| 01 | [▶ 리드 → 견적](docs/videos/01-lead-to-quote.mp4) | 1:38 | 기능 1·2 — Lead 인입 / 사업자등록증 OCR |
-| 02 | [▶ 견적 제품 추가 + 이메일 발송](docs/videos/02-quote-line-and-email.mp4) | 0:49 | 기능 3 — 견적 작성 / PDF 발송 |
-| 03 | [▶ 견적 거절 (의도 분류)](docs/videos/03-quote-rejection.mp4) | 0:24 | 기능 3 — 응답 메일 의도 분류 |
-| 04 | [▶ 견적 재생성](docs/videos/04-quote-regeneration.mp4) | 0:45 | 기능 3 — 재견적 자동 초안 |
-| 05 | [▶ 기회 수주](docs/videos/05-opportunity-won.mp4) | 0:13 | 기능 4 — 수주 전환 |
-| 06 | [▶ 주문 자동 생성](docs/videos/06-order-auto-create.mp4) | 0:26 | 기능 4 — Order 자동 INSERT |
-| 07 | [▶ ERP 동기화](docs/videos/07-erp-sync.mp4) | 0:04 | 기능 4 — ERP 갭 보고 |
-| 08 | [▶ 부분 입금](docs/videos/08-partial-payment.mp4) | 0:09 | 기능 1·6 — 분할 입금 / 미수금 추적 |
+> 단계별 원본 영상(MP4 10건)은 [`docs/videos/`](docs/videos/)에 포함되어 있습니다. GitHub 웹에서는 용량이 큰 MP4가 미리보기 대신 다운로드로 표시될 수 있어, 핵심 장면은 GIF로 별도 제공합니다. 일부 GIF(견적 라인·재견적)는 분량 조절을 위해 약간 빠르게 재생됩니다.
 
 📊 발표 슬라이드 전체본: [`한도정밀 L2C 발표_최종본.html`](한도정밀%20L2C%20발표_최종본.html) (29페이지)
 
@@ -167,7 +156,9 @@ Map<String,Object> data = invokeAction(tool, question); // 2단계 — 데이터
 return LlmRouter.synthesize(question, data);            // 3단계 — 한국어 응답 합성 (Prompt: AgentSynthesize)
 ```
 
-**시연** — [▶ 부분 입금](docs/videos/08-partial-payment.mp4) · 미수금 카드와 입금 등록 동작
+**시연 — 부분 입금 등록 / 미수금 추적**
+
+![부분 입금 등록 시연](docs/gifs/08-partial-payment.gif)
 
 ---
 
@@ -191,7 +182,7 @@ ConnectApi.EinsteinLLM.generateMessagesForPromptTemplate(
 
 > **`stripCodeFences` 헬퍼** — LLM이 응답을 ` ```json … ``` ` 코드 펜스로 감싸는 경우가 잦아, 모든 LLM 응답 경로에 정제 헬퍼 통과를 의무화했습니다.
 
-**시연** — [▶ 리드 → 견적](docs/videos/01-lead-to-quote.mp4) (1:38)
+**시연** — [리드 → 견적 전체 영상 (1:38)](docs/videos/01-lead-to-quote.mp4) · 저장소 내 원본(MP4)
 
 ---
 
@@ -212,7 +203,19 @@ QuoteRequoteService.autoDraftIfRequote(em.Id);     // 원본 라인 복제 + Des
 
 > **가격 안전 정책** — AI는 `Quote.Description`에 자연어 분석만 작성합니다. 단가·수량·할인은 원본 라인을 그대로 복제하고, AE가 Draft 상태에서 수동 확정합니다.
 
-**시연** — [▶ 견적 제품 추가 + 이메일 발송](docs/videos/02-quote-line-and-email.mp4) · [▶ 견적 거절](docs/videos/03-quote-rejection.mp4) · [▶ 견적 재생성](docs/videos/04-quote-regeneration.mp4)
+**시연**
+
+견적 제품 추가 + 이메일 발송:
+
+![견적 라인 추가와 이메일 발송 시연](docs/gifs/02-quote-line-and-email.gif)
+
+견적 거절 → 의도 분류:
+
+![견적 거절 의도 분류 시연](docs/gifs/03-quote-rejection.gif)
+
+재견적 자동 초안:
+
+![재견적 자동 생성 시연](docs/gifs/04-quote-regeneration.gif)
 
 ---
 
@@ -244,7 +247,19 @@ toCreate.add(new Order(
 
 > **외부 통신 0건** — ERP는 인터페이스(`IExternalErpService`) + Mock 구현체로 시연합니다. 갭 계산은 주문 고유 ID 해시 기반 결정론적 분기 — 같은 주문은 매번 같은 결과를 냅니다. 실제 어댑터로 swap 가능한 구조입니다.
 
-**시연** — [▶ 기회 수주](docs/videos/05-opportunity-won.mp4) · [▶ 주문 자동 생성](docs/videos/06-order-auto-create.mp4) · [▶ ERP 동기화](docs/videos/07-erp-sync.mp4)
+**시연**
+
+기회 수주 전환:
+
+![기회 수주 시연](docs/gifs/05-opportunity-won.gif)
+
+주문 자동 생성:
+
+![주문 자동 생성 시연](docs/gifs/06-order-auto-create.gif)
+
+ERP 갭 동기화:
+
+![ERP 동기화 시연](docs/gifs/07-erp-sync.gif)
 
 ---
 
@@ -332,7 +347,8 @@ scripts/destructive/ # 정리용 destructive 매니페스트
 specs/              # SalesCockpitAssistant.yaml (Agentforce 스펙)
 docs/
   screenshots/      # 단계 게이트 화면증적 4장
-  videos/           # 데모 시연 영상 10건
+  gifs/             # 기능별 시연 GIF 7건 (README 인라인)
+  videos/           # 데모 시연 영상 원본 10건 (MP4)
   기획서/ 발표자료/   # 기획·설계·발표 문서
 한도정밀 L2C 발표_최종본.html   # 발표 슬라이드 (29페이지)
 HANDOFF.md          # 일자별 인계 문서
